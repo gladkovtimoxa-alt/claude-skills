@@ -1,0 +1,15 @@
+{
+  "name": "faq-knowledge-base",
+  "description": "Build and maintain the question/answer knowledge base that bots and auto-replies answer from: mine real questions, write short answers with review dates, collect customers' own phrasings, lint for duplicates, empty answers, stale facts and confusable entries (0-100), and measure coverage on real traffic with clusters of unanswered questions. JSON format shared with telegram-bot and smart-reply-router.",
+  "version": "2.12.0",
+  "author": {
+    "name": "gladkovtimoxa-alt",
+    "url": "https://github.com/gladkovtimoxa-alt"
+  },
+  "homepage": "https://github.com/gladkovtimoxa-alt/claude-skills/tree/main/productivity/faq-knowledge-base",
+  "repository": "https://github.com/gladkovtimoxa-alt/claude-skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/faq-knowledge-base"
+  ]
+}

@@ -303,3 +303,5 @@ Always provide alternatives for high-stakes elements (headline, CTA). Never deli
 - **content-humanizer**: USE when AI-drafted copy sounds robotic or templated. NOT for strategic decisions.
 - **ab-test-setup**: USE to design experiments testing copy variants. NOT for writing the copy itself.
 - **email-sequence**: USE for email copywriting specifically. NOT for page or landing page copy.
+- **desire-map**: USE before writing to pick the segment's core desire and the proof the copy must show. NOT for the writing itself.
+- **ru-marketing-compliance**: USE on the finished copy for the Russian market (ФЗ-38 claims, erid). NOT for writing.

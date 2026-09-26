@@ -1,0 +1,15 @@
+{
+  "name": "jev",
+  "description": "Move typed decisions (choose one / yes-no / position on a scale) off the LLM and onto Jev (TypeSafe System One): structured criteria, batched questions, probability gates in code, LLM only on escalation. Includes a stdlib request validator and an answer gate.",
+  "version": "2.12.0",
+  "author": {
+    "name": "gladkovtimoxa-alt",
+    "url": "https://github.com/gladkovtimoxa-alt"
+  },
+  "homepage": "https://github.com/gladkovtimoxa-alt/claude-skills/tree/main/engineering/jev",
+  "repository": "https://github.com/gladkovtimoxa-alt/claude-skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/jev"
+  ]
+}

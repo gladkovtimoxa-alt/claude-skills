@@ -1,0 +1,15 @@
+{
+  "name": "smart-reply-router",
+  "description": "Answer incoming email and messenger messages while calling the LLM only for replies that need new text: Jev triages each message in one batch (intent, FAQ match, urgency, spam, needs-human), code routes to ignore / human / FAQ template / LLM draft. Drafts by default; auto-send only for whitelisted FAQ templates on explicit opt-in; red-line topics always go to the human.",
+  "version": "2.12.0",
+  "author": {
+    "name": "gladkovtimoxa-alt",
+    "url": "https://github.com/gladkovtimoxa-alt"
+  },
+  "homepage": "https://github.com/gladkovtimoxa-alt/claude-skills/tree/main/productivity/smart-reply-router",
+  "repository": "https://github.com/gladkovtimoxa-alt/claude-skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/smart-reply-router"
+  ]
+}

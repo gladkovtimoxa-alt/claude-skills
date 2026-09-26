@@ -1,0 +1,6 @@
+{
+  "source": {
+    "build_pattern": "Path-B method skill — TypeSafe System One (Jev) integration practice distilled from the gmoreva/jev-scripts experiments + deterministic request linting and answer gating tooling",
+    "distinct_from": "engineering/llm-cost-optimizer (caching, model routing and cost observability for LLM calls that stay; jev removes the calls whose output is a label, boolean or level)"
+  }
+}

@@ -1,41 +1,37 @@
-# jev — Typed Decisions Instead of LLM Calls
+# jev — типизированные решения вместо вызовов LLM
 
-> Code owns the loop. Jev answers "which one / yes or no / how much" in ~100-500 ms. The LLM only handles alarms.
+> Цикл принадлежит коду. Jev отвечает на «что выбрать / да или нет / насколько» за ~100-500 мс. LLM обрабатывает только тревоги.
 
-Jev (TypeSafe System One) is not a text generator: it takes a JSON `state` plus a batch of
-questions and returns typed answers with probabilities. This plugin teaches the agent to find
-LLM calls that are really decisions, rewrite them as Jev questions with structured criteria,
-and gate the answers in code.
+Jev (TypeSafe System One) не генерирует текст: на вход она получает JSON `state` и пачку вопросов, а возвращает типизированные ответы с вероятностями. Этот плагин учит агента находить вызовы LLM, которые на деле являются решениями, переписывать их в вопросы Jev со структурными критериями и проверять ответы порогами в коде.
 
-## The discipline
+## Правила
 
-| Rule | Enforced by |
+| Правило | Чем обеспечено |
 |---|---|
-| All questions of one step go in one batch request | `SKILL.md` workflow |
-| Criteria are `{what, not_for, examples}`, not plain strings | `jev_request_validator.py` — warning |
-| Choice has a `no_match` option when nothing-fits is possible | `jev_request_validator.py` — warning |
-| Reversible actions gate on `p(top) ≥ 0.55`; dangerous ones on confidence too | `jev_answer_gate.py` |
-| Noul 0.4-0.6 is "don't know", never "medium" | `jev_answer_gate.py` — escalates |
-| The API key lives in env only (`JEV_API_KEY`) | `SKILL.md` anti-patterns |
+| Все вопросы одного шага — в одном пакетном запросе | порядок работы в `SKILL.md` |
+| Критерии — `{what, not_for, examples}`, а не строки | `jev_request_validator.py` — предупреждение |
+| В Choice есть `no_match`, если «ничего не подходит» возможно | `jev_request_validator.py` — предупреждение |
+| Обратимые действия — по `p(top) ≥ 0.55`; опасные — ещё и по confidence | `jev_answer_gate.py` |
+| Noul 0.4-0.6 — это «не знаю», а не «среднее» | `jev_answer_gate.py` — эскалация |
+| API-ключ только в окружении (`JEV_API_KEY`) | антипаттерны в `SKILL.md` |
 
-## Quick start
+## Быстрый старт
 
 ```bash
 python skills/jev/scripts/jev_request_validator.py --sample
 python skills/jev/scripts/jev_answer_gate.py --sample
 ```
 
-Or just say **"which of my LLM calls can Jev replace?"** or **"write a Jev request that routes these tickets"**.
+Или просто скажите **«какие мои вызовы LLM может заменить Jev?»** или **«напиши запрос Jev для маршрутизации этих тикетов»**.
 
-## What's in the box
+## Что внутри
 
-| Path | Purpose |
+| Путь | Назначение |
 |---|---|
-| `skills/jev/SKILL.md` | Workflow: find decision-shaped LLM calls, design questions, gate, escalate |
-| `skills/jev/references/api-reference.md` | Endpoint, request/response contract, errors, stdlib/Node clients |
-| `skills/jev/references/question-design.md` | Choice / Noul / Score patterns, state design, batching |
-| `skills/jev/scripts/jev_request_validator.py` | Lints a request payload (0-100 score). No network |
-| `skills/jev/scripts/jev_answer_gate.py` | Response → act / escalate / human per question. No network |
+| `skills/jev/SKILL.md` | Порядок работы: найти вызовы-решения, составить вопросы, пороги, эскалация |
+| `skills/jev/references/api-reference.md` | Endpoint, формат запроса и ответа, ошибки, клиенты на Python и Node |
+| `skills/jev/references/question-design.md` | Приёмы для Choice / Noul / Score, устройство state, пачки |
+| `skills/jev/scripts/jev_request_validator.py` | Проверяет запрос (оценка 0-100). Без сети |
+| `skills/jev/scripts/jev_answer_gate.py` | Ответ → act / escalate / human по каждому вопросу. Без сети |
 
-Scripts are stdlib-only and deterministic; the Jev call itself happens in your code with
-`JEV_API_KEY` from the environment.
+Скрипты используют только стандартную библиотеку и детерминированы; сам вызов Jev делает ваш код с `JEV_API_KEY` из окружения.

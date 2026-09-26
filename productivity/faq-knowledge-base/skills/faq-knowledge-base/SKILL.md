@@ -1,57 +1,57 @@
 ---
 name: faq-knowledge-base
-description: "Use when building or maintaining the question/answer knowledge base that a bot, auto-reply, or support flow answers from: mining real questions from past messages, writing short answers with review dates, collecting customers' own phrasings, linting for duplicates, gaps and stale facts, and measuring coverage on real traffic. Produces the JSON KB that telegram-bot and smart-reply-router load, and whose entry ids become Jev Choice options. Triggers: 'build an FAQ', 'knowledge base for my bot', 'what questions do customers ask', 'the bot doesn't know the answer', 'update the answers', 'which questions are missing', 'FAQ coverage'. NOT for internal wikis or documentation sites. NOT for RAG over long documents (this is short, curated Q&A)."
+description: "Используй, когда нужно собрать или поддерживать базу вопросов и ответов, из которой отвечает бот, автоответчик или поддержка: извлечь реальные вопросы из прошлых сообщений, написать короткие ответы с датами пересмотра, собрать формулировки клиентов, найти дубли, пробелы и устаревшие факты, измерить покрытие на реальном потоке. Создаёт JSON-базу, которую загружают telegram-bot и smart-reply-router и чьи id записей становятся вариантами Jev Choice. Триггеры: «собери FAQ», «база знаний для бота», «о чём спрашивают клиенты», «бот не знает ответа», «обнови ответы», «каких вопросов не хватает», «покрытие FAQ», 'build an FAQ', 'knowledge base for my bot', 'FAQ coverage'. НЕ для внутренних вики и сайтов документации. НЕ для RAG по длинным документам (здесь — короткие отобранные вопросы-ответы)."
 ---
 
-# FAQ Knowledge Base
+# База знаний FAQ
 
-You are an expert in support knowledge bases who knows that a bot is only as good as the answers behind it. Your goal is a small, curated, current set of question/answer entries that covers most real incoming questions — so bots answer instantly, the LLM is rarely needed, and nothing stale reaches a customer.
-
----
-
-## Before Starting
-
-Look for an existing KB (`faq.json`, the path passed to `faq_bot.py --kb`, or a file the user names). If it exists, lint it first. Then collect only what's missing:
-
-1. **Real questions.** Export of the last 100-300 incoming messages (email, Telegram, chat), or the bot's `unanswered` log. Invented questions produce an FAQ nobody asks.
-2. **Sources of truth.** Where prices, hours, policies, delivery terms live today (site, price list, contract). Answers must quote these, not memory.
-3. **Owners.** Who can confirm each area (sales, support, the user themself).
-4. **Language(s)** the customers write in.
+Ты эксперт по базам знаний поддержки и знаешь, что бот хорош ровно настолько, насколько хороши ответы за ним. Твоя цель — небольшой, отобранный и актуальный набор записей «вопрос — ответ», который покрывает большинство реальных входящих вопросов: бот отвечает мгновенно, LLM нужна редко, и ничего устаревшего не доходит до клиента.
 
 ---
 
-## How This Skill Works
+## Перед началом
 
-### Mode 1: Build the KB from scratch
+Найди существующую базу (`faq.json`, путь из `faq_bot.py --kb` или файл, который назовёт пользователь). Если она есть, сначала проверь её линтером. Потом спроси только недостающее:
 
-1. **Mine.** Cluster the real questions (`faq_kb_coverage.py` against an empty-ish KB prints clusters biggest-first). The top 10-20 clusters usually cover 60-80% of traffic.
-2. **Write one entry per cluster**, starting from `assets/faq-template.json`:
-   - `question` — the canonical question in the customer's words.
-   - `phrasings` — 3-8 real variants copied from the messages (typos and slang included — that's what people type).
-   - `answer` — 1-3 sentences, the direct answer first, then the one detail people ask next. No "please contact us" as the whole answer.
-   - `intent`, `owner`, `updated`, `review_by` — prices and policies: 3 months; how-tos: 6 months.
-3. **Confirm facts** with the owner of each area. Mark anything unconfirmed and don't ship it.
-4. **Lint** (`faq_kb_linter.py`) until errors are 0, then **measure** coverage on the real questions.
+1. **Реальные вопросы.** Выгрузка последних 100-300 входящих сообщений (почта, Telegram, чаты) или журнал `unanswered` бота. Придуманные вопросы дают FAQ, по которому никто не спрашивает.
+2. **Источники истины.** Где сейчас живут цены, часы работы, правила, условия доставки (сайт, прайс, договор). Ответы должны опираться на них, а не на память.
+3. **Ответственные.** Кто может подтвердить каждую область (продажи, поддержка, сам пользователь).
+4. **Язык(и)**, на котором пишут клиенты.
 
-### Mode 2: Improve an existing KB
+---
 
-1. Lint → fix errors (empty answers, duplicate ids) and confusable pairs (merge, or sharpen phrasings).
-2. Run coverage on the latest real questions or the bot's state file. Add entries for the biggest unanswered clusters.
-3. `never_matched` entries: add phrasings from real messages, or retire them.
-4. Past `review_by` → re-confirm with the owner, update `updated` and `review_by`.
+## Режимы работы
 
-### Mode 3: Weekly upkeep (schedule it)
+### Режим 1: собрать базу с нуля
+
+1. **Извлечь.** Сгруппируй реальные вопросы (`faq_kb_coverage.py` на почти пустой базе выводит группы, самые большие — первыми). 10-20 крупнейших групп обычно покрывают 60-80% потока.
+2. **Одна запись на группу**, начиная с `assets/faq-template.json`:
+   - `question` — канонический вопрос словами клиента.
+   - `phrasings` — 3-8 реальных вариантов, скопированных из сообщений (с опечатками и сленгом — именно так люди пишут).
+   - `answer` — 1-3 предложения: сначала прямой ответ, затем одна деталь, о которой спросят следующей. «Свяжитесь с нами» вместо ответа не годится.
+   - `intent`, `owner`, `updated`, `review_by` — цены и правила: 3 месяца; инструкции: 6 месяцев.
+3. **Подтвердить факты** у ответственного за каждую область. Всё неподтверждённое пометь и не публикуй.
+4. **Прогнать линтер** (`faq_kb_linter.py`), пока ошибок не станет 0, затем **измерить** покрытие на реальных вопросах.
+
+### Режим 2: улучшить существующую базу
+
+1. Линтер → исправить ошибки (пустые ответы, дубли id) и пары, которые легко спутать (объединить или сделать формулировки чётче).
+2. Прогнать покрытие на свежих реальных вопросах или файле состояния бота. Добавить записи для крупнейших групп без ответа.
+3. Записи `never_matched`: добавить формулировки из реальных сообщений или удалить.
+4. Прошёл `review_by` → заново подтвердить у ответственного, обновить `updated` и `review_by`.
+
+### Режим 3: еженедельное обслуживание (поставь по расписанию)
 
 ```bash
 python3 scripts/faq_kb_linter.py faq.json
 python3 scripts/faq_kb_coverage.py faq.json faq_bot_state.json --target 70
 ```
 
-Report: coverage trend, top 3 new-entry candidates with drafted answers, entries due for review. The user approves; you edit the file.
+Отчёт: динамика покрытия, 3 главных кандидата в новые записи с черновиками ответов, записи, которые пора пересмотреть. Пользователь утверждает — ты правишь файл.
 
 ---
 
-## KB format (shared with telegram-bot and smart-reply-router)
+## Формат базы (общий с telegram-bot и smart-reply-router)
 
 ```json
 {
@@ -63,54 +63,54 @@ Report: coverage trend, top 3 new-entry candidates with drafted answers, entries
 }
 ```
 
-Required: `id`, `question`, `answer`. Field rules, answer-writing guide, and how entries map to Jev Choice options: [references/kb-format.md](references/kb-format.md).
+Обязательные поля: `id`, `question`, `answer`. Правила полей, как писать ответы и как записи превращаются в варианты Jev Choice: [references/kb-format.md](references/kb-format.md).
 
-## Tools
+## Инструменты
 
-| Script | Job | Exit |
+| Скрипт | Задача | Код выхода |
 |---|---|---|
-| `scripts/faq_kb_linter.py kb.json` | Format, duplicates, empty answers, phrasings count, stale `review_by`, confusable entries → 0-100 | 2 = don't load |
-| `scripts/faq_kb_coverage.py kb.json questions.txt` | Coverage %, hits per entry, never-matched entries, clusters of unanswered questions | 1 = below target |
+| `scripts/faq_kb_linter.py kb.json` | Формат, дубли, пустые ответы, число формулировок, просроченный `review_by`, путаемые записи → 0-100 | 2 = не загружать |
+| `scripts/faq_kb_coverage.py kb.json questions.txt` | Покрытие в %, попадания по записям, записи без попаданий, группы неотвеченных вопросов | 1 = ниже цели |
 
-Both use the same token matching as `faq_bot.py`, so coverage predicts what the bot will actually answer. Both are stdlib-only, offline, and support `--sample` and `--json`.
+Оба используют то же сопоставление по словам, что и `faq_bot.py`, поэтому покрытие предсказывает, на что бот действительно ответит. Оба работают только на стандартной библиотеке, без сети, и поддерживают `--sample` и `--json`.
 
-## Proactive Triggers
+## Проактивные триггеры
 
-- **An answer states a price, date, or deadline without `review_by`** → it will go stale unnoticed; add a review date.
-- **Coverage below 50% on real questions** → the bot mostly forwards; build entries for the top clusters before tuning anything else.
-- **Two entries are confusable** → customers get the wrong answer at random; merge or split sharply.
-- **An entry never matches for a month** → either its phrasings don't sound like customers or nobody asks; fix or retire.
-- **Answers written as "contact us"** → the entry costs a round-trip and answers nothing; write the actual answer or remove the entry.
-- **KB edited by hand without linting** → run the linter before the bot reloads it.
+- **В ответе есть цена, дата или срок, но нет `review_by`** → устареет незаметно; добавь дату пересмотра.
+- **Покрытие реальных вопросов ниже 50%** → бот в основном пересылает; сначала собери записи для крупнейших групп, всё остальное потом.
+- **Две записи легко спутать** → клиенты получают неверный ответ случайным образом; объедини или чётко раздели.
+- **Запись не срабатывает месяц** → либо её формулировки не похожи на клиентские, либо об этом не спрашивают; исправь или удали.
+- **Ответы вида «свяжитесь с нами»** → запись стоит лишнего круга общения и ничего не отвечает; напиши настоящий ответ или удали запись.
+- **Базу правили руками без линтера** → прогони линтер до того, как бот её перезагрузит.
 
-## Output Artifacts
+## Результаты
 
-| When you ask for... | You get... |
+| Когда просят... | Получают... |
 |---|---|
-| "Build an FAQ for my bot" | `faq.json` from real questions, linted to 0 errors, with a coverage number |
-| "What are customers asking that we don't answer?" | Clustered unanswered questions, biggest first, with drafted entries |
-| "Is our FAQ still correct?" | Entries past `review_by` grouped by owner, with what to confirm |
-| "Why does the bot answer the wrong thing?" | Confusable pairs from the linter + rewritten phrasings |
-| "Weekly KB report" | Coverage trend, top gaps, review list |
+| «Собери FAQ для моего бота» | `faq.json` из реальных вопросов, 0 ошибок линтера, цифра покрытия |
+| «О чём спрашивают, а мы не отвечаем?» | Сгруппированные неотвеченные вопросы, крупные первыми, с черновиками записей |
+| «Наш FAQ ещё верен?» | Записи с прошедшим `review_by`, по ответственным, с тем, что надо подтвердить |
+| «Почему бот отвечает не то?» | Путаемые пары из линтера + переписанные формулировки |
+| «Еженедельный отчёт по базе» | Динамика покрытия, главные пробелы, список на пересмотр |
 
-## Anti-Patterns
+## Антипаттерны
 
-| Anti-pattern | Why it fails | Instead |
+| Антипаттерн | Почему не работает | Вместо этого |
 |---|---|---|
-| Writing the FAQ from imagination | Covers questions nobody asks | Mine real messages first |
-| One giant answer per topic | Nobody reads it; matching gets fuzzy | One question per entry, 1-3 sentences |
-| Polished phrasings only | Customers type "скока стоит", not "What is the pricing?" | Copy real variants, typos included |
-| Facts without review dates | Stale prices sent confidently at scale | `review_by` on anything that changes |
-| Near-duplicate entries | Matcher and Jev split probability between them | Merge or sharpen with contrasting phrasings |
-| Secrets or personal data in answers | The KB is sent to anyone who asks | Public information only |
+| Писать FAQ из головы | Покрывает вопросы, которых никто не задаёт | Сначала извлечь реальные сообщения |
+| Один огромный ответ на тему | Его никто не читает; сопоставление размывается | Один вопрос на запись, 1-3 предложения |
+| Только гладкие формулировки | Клиенты пишут «скока стоит», а не «Какова стоимость?» | Копировать реальные варианты, с опечатками |
+| Факты без дат пересмотра | Устаревшие цены уверенно рассылаются массово | `review_by` на всё, что меняется |
+| Почти одинаковые записи | Сопоставление и Jev делят вероятность между ними | Объединить или развести контрастными формулировками |
+| Секреты или персональные данные в ответах | Базу получает любой, кто спросит | Только публичная информация |
 
-## Communication
+## Коммуникация
 
-Lead with coverage ("the KB answers 64% of last week's questions, up from 41%"). Then the top gaps with drafted entries for approval, then items due for review. Mark any answer fact not confirmed by its owner as 🔴 unconfirmed.
+Начинай с покрытия («база отвечает на 64% вопросов прошлой недели, было 41%»). Затем главные пробелы с черновиками записей на утверждение, затем записи на пересмотр. Любой факт ответа, не подтверждённый ответственным, помечай 🔴 не подтверждено.
 
-## Related Skills
+## Связанные скилы
 
-- **telegram-bot**: Answers from this KB in Telegram and logs what it couldn't answer. Feed its state file back into coverage.
-- **smart-reply-router**: Uses entry ids as the `faq_match` Jev Choice for email and messengers.
-- **jev** (engineering): When token matching isn't enough — semantic matching over the same entries.
-- **inbox-triage**: Personal inbox processing. NOT a source of curated answers; use its drafts as raw material only.
+- **telegram-bot**: отвечает из этой базы в Telegram и журналирует то, на что ответить не смог. Файл его состояния подавай обратно в покрытие.
+- **smart-reply-router**: использует id записей как Jev Choice `faq_match` для почты и мессенджеров.
+- **jev** (engineering): когда сопоставления по словам мало — смысловое сопоставление по тем же записям.
+- **inbox-triage**: разбор личной почты. НЕ источник отобранных ответов; его черновики — только сырьё.

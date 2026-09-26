@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Jev answer gate — turn a TypeSafe System One response into act / escalate / human per question.
+"""Порог ответов Jev — превращает ответ TypeSafe System One в act / escalate / human по каждому вопросу.
 
 Applies the thresholds that belong in code, not in the model:
 reversible actions gate on p(top), dangerous ones on confidence AND p(top),
@@ -62,47 +62,47 @@ def gate_distribution(answer, risk, policy):
 
     reasons = []
     if top is not None and no_match and str(top) == no_match:
-        return "escalate", p_top, ["model chose no_match: the answer is not among the candidates"]
+        return "escalate", p_top, ["модель выбрала no_match: ответа нет среди кандидатов"]
     if p_top < rule["min_p_top"]:
         reasons.append(f"p(top)={p_top:.2f} < {rule['min_p_top']}")
     if presence is not None and presence < rule["min_presence"]:
         reasons.append(f"1-p(no_match)={presence:.2f} < {rule['min_presence']}")
     if risk == "dangerous":
         if confidence is None:
-            reasons.append("dangerous action but no confidence in the answer")
+            reasons.append("опасное действие, но в ответе нет confidence")
         elif confidence < rule["min_confidence"]:
             reasons.append(f"confidence={confidence:.2f} < {rule['min_confidence']}")
     if reasons:
         return ("human" if risk == "dangerous" else "escalate"), p_top, reasons
-    return "act", p_top, [f"p(top)={p_top:.2f} passes the {risk} gate"]
+    return "act", p_top, [f"p(top)={p_top:.2f} проходит порог {risk}"]
 
 
 def gate(response, policy):
     answers = response.get("answers")
     if not isinstance(answers, dict):
-        raise ValueError("response has no `answers` object")
+        raise ValueError("в ответе нет объекта `answers`")
     risks = policy.get("questions", {})
     results = []
     for qid, answer in answers.items():
         risk = risks.get(qid, "reversible")
         if risk not in ("reversible", "dangerous"):
-            raise ValueError(f"policy for {qid!r} must be 'reversible' or 'dangerous'")
+            raise ValueError(f"политика для {qid!r} должна быть 'reversible' или 'dangerous'")
         value = noul_value(answer)
         if value is not None and not (isinstance(answer, dict) and "probabilities" in answer):
             band = policy["noul"]
             if value >= band["yes"]:
-                decision, reasons = "act", [f"yes with p={value:.2f}"]
+                decision, reasons = "act", [f"да, p={value:.2f}"]
             elif value <= band["no"]:
-                decision, reasons = "act", [f"no with p(yes)={value:.2f}"]
+                decision, reasons = "act", [f"нет, p(да)={value:.2f}"]
             else:
                 decision = "human" if risk == "dangerous" else "escalate"
-                reasons = [f"p(yes)={value:.2f} is in the unsure band ({band['no']}-{band['yes']})"]
+                reasons = [f"p(да)={value:.2f} в зоне неуверенности ({band['no']}-{band['yes']})"]
             results.append({"question": qid, "type": "noul", "answer": value >= 0.5, "p": round(value, 4),
                             "risk": risk, "decision": decision, "reasons": reasons})
             continue
         if not isinstance(answer, dict):
             results.append({"question": qid, "type": "unknown", "risk": risk, "decision": "escalate",
-                            "reasons": ["unrecognised answer shape"]})
+                            "reasons": ["непонятный формат ответа"]})
             continue
         qtype = "score" if "score" in answer else "choice"
         decision, p_top, reasons = gate_distribution(answer, risk, policy)
@@ -124,11 +124,11 @@ def load(path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Gate a Jev response into act / escalate / human per question. No network calls.")
-    parser.add_argument("response", nargs="?", help="Jev response JSON file ('-' for stdin)")
-    parser.add_argument("--policy", help="policy JSON: {questions: {id: reversible|dangerous}, reversible: {...}, dangerous: {...}, noul: {...}}")
-    parser.add_argument("--sample", action="store_true", help="gate an embedded sample response")
-    parser.add_argument("--json", action="store_true", help="output as JSON")
+    parser = argparse.ArgumentParser(description="Разбор ответа Jev на act / escalate / human по каждому вопросу. Без сетевых вызовов.")
+    parser.add_argument("response", nargs="?", help="JSON-файл ответа Jev ('-' — stdin)")
+    parser.add_argument("--policy", help="JSON-политика: {questions: {id: reversible|dangerous}, reversible: {...}, dangerous: {...}, noul: {...}}")
+    parser.add_argument("--sample", action="store_true", help="разобрать встроенный пример ответа")
+    parser.add_argument("--json", action="store_true", help="вывод в JSON")
     args = parser.parse_args()
 
     try:
@@ -138,10 +138,10 @@ def main():
             response = load(args.response)
             user_policy = load(args.policy) if args.policy else {}
         else:
-            parser.error("give a response file or --sample")
+            parser.error("укажите файл ответа или --sample")
         results = gate(response, merge_policy(user_policy))
     except (OSError, json.JSONDecodeError, ValueError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        print(f"ошибка: {exc}", file=sys.stderr)
         sys.exit(2)
 
     counts = {d: sum(r["decision"] == d for r in results) for d in ("act", "escalate", "human")}

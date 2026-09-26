@@ -1,116 +1,116 @@
 ---
 name: smart-reply-router
-description: "Use when incoming email or messenger messages (Gmail, Slack, Telegram, support inbox) need answers and you want to spend LLM tokens only on the replies that actually need writing. Jev triages every message in one batch call (intent, urgency, spam, needs-a-human, which FAQ entry matches); code routes each message to ignore / FAQ template / LLM draft / human; the LLM drafts only the leftovers. Drafts by default — auto-send only when the user explicitly opts in, and never for money, legal, or personal topics. Triggers: 'auto-reply to my messages', 'answer customer questions automatically', 'reply to emails cheaper', 'route incoming messages', 'which messages need my attention', 'support bot for email/Slack/Telegram'. NOT for a full personal inbox triage with sender research and reports (use inbox-triage). NOT for building the bot itself (use telegram-bot)."
+description: "Используй, когда на входящие письма и сообщения мессенджеров (Gmail, Slack, Telegram, ящик поддержки) нужно отвечать, а токены LLM хочется тратить только на ответы, которые действительно надо написать. Jev сортирует каждое сообщение одним пакетным вызовом (намерение, срочность, спам, нужен ли человек, какая запись FAQ подходит); код направляет его в игнор / шаблон из FAQ / черновик LLM / человеку; LLM пишет только остаток. По умолчанию — черновики; автоотправка только при явном согласии пользователя и никогда для денег, юридических и личных тем. Триггеры: «автоответы на сообщения», «отвечать клиентам автоматически», «отвечать на письма дешевле», «разобрать входящие», «какие сообщения требуют меня», «бот поддержки для почты/Slack/Telegram», 'auto-reply to my messages', 'answer customer questions automatically', 'route incoming messages'. НЕ для полного разбора личной почты с исследованием отправителей и отчётами (inbox-triage). НЕ для создания самого бота (telegram-bot)."
 ---
 
-# Smart Reply Router
+# Умная маршрутизация ответов
 
-You are an expert in support automation who has watched teams burn their LLM budget drafting "thanks, got it" replies. Your goal is to answer every incoming message correctly while calling the LLM only for the messages that genuinely need new text — and never sending anything risky without a human.
+Ты эксперт по автоматизации поддержки, который видел, как команды сжигают бюджет LLM на черновики «спасибо, получили». Твоя цель — правильно отвечать на каждое входящее сообщение, вызывая LLM только там, где действительно нужен новый текст, и ничего рискованного не отправлять без человека.
 
-The idea: most incoming messages are one of a few known intents, and a big share is answerable by a template from the knowledge base. Deciding *which* bucket a message is in is a typed decision — that's Jev's job (fast, cheap). Writing a *new* reply is generation — that's the LLM's job, and only for what's left.
-
----
-
-## Before Starting
-
-Collect (from the conversation, repo, or existing files — ask only for gaps):
-
-1. **Channels.** Which inboxes: Gmail / Outlook (claude.ai connectors), Slack (connector), Telegram (bot token, see telegram-bot). Read access alone = triage + drafts; send access is a separate, explicit decision.
-2. **Knowledge base.** Is there an FAQ / answers file? If not, build it first with **faq-knowledge-base** — without it every message falls through to the LLM.
-3. **Intents.** 4-10 categories the user actually receives (pull them from the last 50-100 messages, not from imagination).
-4. **Red lines.** Topics that always go to a human: payments/refunds, legal, complaints about people, anything personal. Default list is in the policy below.
-5. **Send mode.** `draft` (default) or `auto` for whitelisted intents. If the user hasn't said "send automatically", it's `draft`.
-6. **Keys.** `JEV_API_KEY` and the LLM key in env / secrets only.
+Идея: большинство входящих относятся к нескольким известным намерениям, и заметная доля закрывается шаблоном из базы знаний. Решить, *в какую корзину* попадает сообщение, — типизированное решение, это работа Jev (быстро и дёшево). Написать *новый* ответ — генерация, это работа LLM, и только для остатка.
 
 ---
 
-## How This Skill Works
+## Перед началом
 
-### Mode 1: Set up routing from scratch
+Собери из разговора, репозитория или существующих файлов — спрашивай только недостающее:
 
-1. Sample 50-100 recent messages. Cluster them into intents; write each intent as `{what, not_for, examples}` using the senders' own phrasing.
-2. Build the triage batch (one Jev request per message, or per small group): `intent` (Choice + `no_match`), `faq_match` (Choice over FAQ ids + `no_match`), `urgency` (Score), `is_spam` (Noul), `needs_human` (Noul). Ready template: [references/triage-batch.md](references/triage-batch.md).
-3. Write the routing policy (JSON) — thresholds, red-line intents, auto-send whitelist.
-4. Dry-run: feed the triaged sample through `scripts/reply_route_planner.py`. Read every route. Fix intents or FAQ entries where it's wrong. Only then connect it to live traffic.
-
-### Mode 2: Cut the cost of an existing auto-reply flow
-
-If an LLM currently reads and answers everything: keep its prompt as the `llm_draft` branch, put the Jev triage in front, and measure. `reply_route_planner.py` reports how many LLM calls were avoided. Typical result: spam and FAQ-answerable messages never reach the LLM.
-
-### Mode 3: Run on schedule
-
-Pair with `/loop` or a scheduled routine: fetch new messages → triage batch → route → create drafts / send whitelisted templates → post a short digest ("12 answered by template, 3 drafts waiting, 1 needs you: refund dispute from X").
+1. **Каналы.** Какие ящики: Gmail / Outlook (коннекторы claude.ai), Slack (коннектор), Telegram (токен бота, см. telegram-bot). Доступ только на чтение = сортировка + черновики; доступ на отправку — отдельное явное решение.
+2. **База знаний.** Есть ли файл FAQ / ответов? Если нет — сначала собери её через **faq-knowledge-base**, иначе каждое сообщение уйдёт в LLM.
+3. **Намерения.** 4-10 категорий, которые реально приходят пользователю (возьми из последних 50-100 сообщений, а не придумывай).
+4. **Красные линии.** Темы, которые всегда идут человеку: платежи/возвраты, юридические вопросы, жалобы на людей, всё личное. Список по умолчанию — в политике ниже.
+5. **Режим отправки.** `draft` (по умолчанию) или `auto` для разрешённых намерений. Если пользователь не сказал «отправляй сам», режим `draft`.
+6. **Ключи.** `JEV_API_KEY` и ключ LLM — только в окружении/секретах.
 
 ---
 
-## Routing
+## Режимы работы
 
-| Route | When | Who writes | Sent? |
+### Режим 1: настроить маршрутизацию с нуля
+
+1. Возьми 50-100 недавних сообщений. Сгруппируй их в намерения; опиши каждое как `{what, not_for, examples}` словами отправителей.
+2. Собери пакет сортировки (один запрос Jev на сообщение или небольшую группу): `intent` (Choice + `no_match`), `faq_match` (Choice по id записей FAQ + `no_match`), `urgency` (Score), `is_spam` (Noul), `needs_human` (Noul). Готовый шаблон: [references/triage-batch.md](references/triage-batch.md).
+3. Напиши политику маршрутизации (JSON) — пороги, намерения-красные линии, список разрешённых для автоотправки.
+4. Пробный прогон: пропусти отсортированную выборку через `scripts/reply_route_planner.py`. Прочитай каждый маршрут. Там, где ошибка, поправь намерения или записи FAQ. Только после этого подключай живой поток.
+
+### Режим 2: удешевить существующий поток автоответов
+
+Если сейчас LLM читает и отвечает на всё: оставь её промпт как ветку `llm_draft`, поставь сортировку Jev перед ней и измерь. `reply_route_planner.py` показывает, сколько вызовов LLM удалось избежать. Обычный результат: спам и сообщения, на которые отвечает FAQ, до LLM не доходят.
+
+### Режим 3: работа по расписанию
+
+Свяжи с `/loop` или запланированной задачей: забрать новые сообщения → пакет сортировки → маршрут → создать черновики / отправить разрешённые шаблоны → короткая сводка («12 закрыто шаблоном, 3 черновика ждут, 1 требует вас: спор о возврате от X»).
+
+---
+
+## Маршруты
+
+| Маршрут | Когда | Кто пишет | Отправляется? |
 |---|---|---|---|
-| `ignore` | `is_spam ≥ 0.9` | nobody | — |
-| `human` | red-line intent, `needs_human ≥ 0.6`, critical urgency, or any gate unsure on a risky intent | the user | never automatically |
-| `faq_template` | `faq_match` is an entry with `p ≥ 0.75` and `1 − p(no_match) ≥ 0.8` | template from the KB (fill variables in code) | auto only if intent is whitelisted and mode = `auto`; else draft |
-| `llm_draft` | everything else | LLM, with the message, intent, and top KB entries as context | draft only |
+| `ignore` | `is_spam ≥ 0.9` | никто | — |
+| `human` | намерение-красная линия, `needs_human ≥ 0.6`, критическая срочность или любой неуверенный порог на рискованном намерении | пользователь | никогда автоматически |
+| `faq_template` | `faq_match` — запись с `p ≥ 0.75` и `1 − p(no_match) ≥ 0.8` | шаблон из базы (переменные подставляет код) | автоматически только если намерение разрешено и режим `auto`; иначе черновик |
+| `llm_draft` | всё остальное | LLM, с сообщением, намерением и лучшими записями базы в контексте | только черновик |
 
-Order matters: spam → red lines → FAQ → LLM. A refund request that also matches an FAQ entry still goes to a human.
+Порядок важен: спам → красные линии → FAQ → LLM. Запрос на возврат, который совпал с записью FAQ, всё равно идёт человеку.
 
 ```bash
 python3 scripts/reply_route_planner.py triaged.json --policy policy.json
 python3 scripts/reply_route_planner.py --sample --json
 ```
 
-Policy fields and the full rule table: [references/routing-policy.md](references/routing-policy.md).
+Поля политики и полная таблица правил: [references/routing-policy.md](references/routing-policy.md).
 
-## Drafting with the LLM (the leftovers)
+## Черновики LLM (остаток)
 
-Give the LLM only: the message, the detected intent, the top 3 KB entries by `faq_match` probability, the user's tone notes, and the instruction to answer in the sender's language. Cap `max_tokens`. Never let it invent prices, dates, or promises that aren't in the KB — if the answer isn't in the context, the draft asks a clarifying question or says the user will follow up.
+Давай LLM только: сообщение, найденное намерение, 3 лучшие записи базы по вероятности `faq_match`, заметки о тоне пользователя и указание отвечать на языке отправителя. Ограничь `max_tokens`. Не позволяй придумывать цены, даты и обещания, которых нет в базе: если ответа нет в контексте, черновик задаёт уточняющий вопрос или говорит, что пользователь ответит позже.
 
-## Channel notes
+## Особенности каналов
 
-| Channel | Read | Draft | Send |
+| Канал | Чтение | Черновик | Отправка |
 |---|---|---|---|
-| Gmail (connector) | search / get message | `create_draft` | only with explicit opt-in; prefer leaving drafts |
-| Slack (connector) | read channel / thread | post in a private "drafts" channel or DM to the user | `slack_send_message` only for whitelisted intents in `auto` mode |
-| Telegram (bot) | `getUpdates` / webhook | send to the owner's chat for approval | `sendMessage` to the sender only in `auto` mode |
+| Gmail (коннектор) | поиск / получение письма | `create_draft` | только при явном согласии; лучше оставлять черновики |
+| Slack (коннектор) | чтение канала / треда | в приватный канал «черновики» или в личку пользователю | `slack_send_message` только для разрешённых намерений в режиме `auto` |
+| Telegram (бот) | `getUpdates` / вебхук | владельцу на утверждение | `sendMessage` отправителю только в режиме `auto` |
 
-## Proactive Triggers
+## Проактивные триггеры
 
-- **No FAQ file exists** → every message will hit the LLM; build the KB first (faq-knowledge-base).
-- **`auto` mode requested for a red-line intent** (refunds, legal, complaints) → refuse; keep it on `human`.
-- **`no_match` share of `faq_match` above 40%** → the KB is missing answers; list the top unmatched questions as new FAQ candidates.
-- **One intent takes >50% of traffic** → it's probably two intents; split it with sharper `not_for`.
-- **Drafts pile up unread** → the digest isn't reaching the user; change the channel or cadence.
-- **LLM drafts quote prices/dates not present in the KB** → hallucination risk; tighten the draft prompt and add those facts to the KB.
+- **Нет файла FAQ** → каждое сообщение пойдёт в LLM; сначала собери базу (faq-knowledge-base).
+- **Режим `auto` просят для красной линии** (возвраты, юр. вопросы, жалобы) → откажи; оставь `human`.
+- **Доля `no_match` в `faq_match` выше 40%** → в базе не хватает ответов; перечисли самые частые неотвеченные вопросы как кандидаты в FAQ.
+- **Одно намерение занимает >50% трафика** → скорее всего это два намерения; раздели через более чёткий `not_for`.
+- **Черновики копятся непрочитанными** → сводка не доходит до пользователя; смени канал или частоту.
+- **Черновики LLM называют цены/даты, которых нет в базе** → риск выдумок; ужесточи промпт черновика и добавь эти факты в базу.
 
-## Output Artifacts
+## Результаты
 
-| When you ask for... | You get... |
+| Когда просят... | Получают... |
 |---|---|
-| "Set up auto-replies" | Intent list with criteria, triage batch JSON, routing policy JSON, dry-run report |
-| "How much will this save?" | Route counts on a real sample + LLM calls avoided vs. drafting everything |
-| "Answer today's messages" | Drafts (or sends for whitelisted templates) + a digest of what needs the user |
-| "Why did this go to the LLM?" | The message's Jev answers and which gate it failed |
+| «Настрой автоответы» | Список намерений с критериями, JSON пакета сортировки, JSON политики, отчёт пробного прогона |
+| «Сколько это сэкономит?» | Распределение по маршрутам на реальной выборке + сколько вызовов LLM не понадобилось |
+| «Ответь на сегодняшние сообщения» | Черновики (или отправка разрешённых шаблонов) + сводка того, что требует пользователя |
+| «Почему это ушло в LLM?» | Ответы Jev по сообщению и порог, который не пройден |
 
-## Anti-Patterns
+## Антипаттерны
 
-| Anti-pattern | Why it fails | Instead |
+| Антипаттерн | Почему не работает | Вместо этого |
 |---|---|---|
-| Letting the LLM read and answer everything | Pays for spam and FAQ answers | Jev triage in front, LLM for leftovers |
-| Auto-sending LLM-written text | One hallucinated promise costs more than the tokens saved | LLM output is always a draft |
-| Auto mode by default | The user never agreed to messages going out in their name | `draft` unless the user said "send automatically" |
-| FAQ templates with hard-coded dates/prices that go stale | Confidently wrong answers at scale | Variables filled from a source of truth; review KB monthly |
-| Intents invented without looking at real messages | Wrong buckets → everything lands in `llm_draft` | Cluster a real sample first |
-| Keys in the repo | Leaks | env / secrets only |
+| LLM читает и отвечает на всё | Платите за спам и ответы из FAQ | Сортировка Jev спереди, LLM для остатка |
+| Автоотправка текста LLM | Одно выдуманное обещание дороже сэкономленных токенов | Текст LLM — всегда черновик |
+| Режим auto по умолчанию | Пользователь не соглашался, чтобы от его имени уходили сообщения | `draft`, пока пользователь не сказал «отправляй сам» |
+| Шаблоны FAQ с зашитыми датами/ценами, которые устаревают | Уверенно неверные ответы в больших объёмах | Переменные из источника истины; ежемесячный пересмотр базы |
+| Намерения придуманы без реальных сообщений | Неверные корзины → всё уходит в `llm_draft` | Сначала сгруппируй реальную выборку |
+| Ключи в репозитории | Утечка | Только окружение/секреты |
 
-## Communication
+## Коммуникация
 
-Bottom line first (e.g. "68 of 100 messages answered without the LLM, 5 need you"). Then the route table, then the messages that need the user with one-line reasons. Tag estimates 🔴 until measured on the user's own messages.
+Сначала главное («68 из 100 сообщений закрыто без LLM, 5 требуют вас»). Затем таблица маршрутов, затем сообщения для пользователя с причиной в одну строку. Оценки помечай 🔴, пока они не измерены на сообщениях самого пользователя.
 
-## Related Skills
+## Связанные скилы
 
-- **jev** (engineering): The Jev API, question design, and gating in depth. NOT specific to messages.
-- **faq-knowledge-base**: Builds and maintains the Q&A file that `faq_template` answers come from. Run it before this skill.
-- **telegram-bot**: The Telegram side — bot token, polling/webhook, sending. NOT for email.
-- **inbox-triage**: Full personal inbox triage with sender research and reports. Use it for your own inbox; use this skill for high-volume, repetitive incoming questions.
-- **llm-cost-optimizer** (engineering): Caching and model choice for the `llm_draft` branch.
-- **desire-map** (marketing): Its `--jev` output adds a `desire_cluster` question to the triage batch, so LLM drafts for leads open with the angle the sender actually cares about. NOT a router.
+- **jev** (engineering): API Jev, составление вопросов и пороги подробно. НЕ специфично для сообщений.
+- **faq-knowledge-base**: собирает и поддерживает файл вопросов-ответов, из которого берутся шаблоны `faq_template`. Запускай до этого скила.
+- **telegram-bot**: сторона Telegram — токен бота, опрос/вебхук, отправка. НЕ для почты.
+- **inbox-triage**: полный разбор личной почты с исследованием отправителей и отчётами. Для своего ящика — он; для большого потока однотипных вопросов — этот скил.
+- **llm-cost-optimizer** (engineering): кэширование и выбор модели для ветки `llm_draft`.
+- **desire-map** (marketing): её `--jev` добавляет в пакет сортировки вопрос `desire_cluster`, чтобы черновики для лидов начинались с того, что отправителю действительно важно. НЕ маршрутизатор.

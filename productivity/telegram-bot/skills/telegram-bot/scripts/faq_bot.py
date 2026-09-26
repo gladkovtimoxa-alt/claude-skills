@@ -43,8 +43,8 @@ STOPWORDS = {
 }
 
 DEFAULT_TEXTS = {
-    "greeting": "Hi! Ask me a question — I'll answer right away if I know it, or pass it on and reply here.",
-    "fallback": "Thanks! I've passed your question on — the answer will come here in this chat.",
+    "greeting": "Здравствуйте! Задайте вопрос — отвечу сразу, если знаю ответ, или передам его и отвечу здесь.",
+    "fallback": "Спасибо! Я передал ваш вопрос — ответ придёт сюда, в этот чат.",
 }
 
 SAMPLE_KB = {
@@ -97,10 +97,10 @@ def load_kb(path):
     with open(path, encoding="utf-8") as f:
         kb = json.load(f)
     if not isinstance(kb, dict) or not isinstance(kb.get("entries"), list):
-        raise ValueError("KB must be an object with an `entries` list")
+        raise ValueError("база знаний должна быть объектом со списком `entries`")
     for e in kb["entries"]:
         if not e.get("id") or not e.get("answer"):
-            raise ValueError(f"KB entry without id or answer: {e!r:.80}")
+            raise ValueError(f"запись базы без id или answer: {e!r:.80}")
     return kb
 
 
@@ -176,12 +176,12 @@ def handle(token, owner, kb, state, update, args):
         target = state["relay"].get(str(replied)) if replied else None
         if target:
             send(token, target["chat_id"], text, reply_to=target["message_id"])
-            send(token, chat["id"], "✅ Sent.", reply_to=msg["message_id"])
+            send(token, chat["id"], "✅ Отправлено.", reply_to=msg["message_id"])
             return
     if chat.get("type") != "private":
         return
     if text == "/id":
-        send(token, chat["id"], f"Your chat id: {chat['id']}")
+        send(token, chat["id"], f"Ваш chat id: {chat['id']}")
         return
     if text in ("/start", "/help"):
         send(token, chat["id"], texts["greeting"])
@@ -195,9 +195,9 @@ def handle(token, owner, kb, state, update, args):
     state["unanswered"] = (state["unanswered"] + [{"text": text, "ts": msg.get("date")}])[-MAX_UNANSWERED_LOG:]
     if owner:
         who = msg.get("from", {})
-        name = " ".join(filter(None, [who.get("first_name"), who.get("last_name")])) or "someone"
+        name = " ".join(filter(None, [who.get("first_name"), who.get("last_name")])) or "кто-то"
         handle_name = f" @{who['username']}" if who.get("username") else ""
-        forwarded = send(token, owner, f"❓ {name}{handle_name} (chat {chat['id']}):\n\n{text}\n\n↩️ Reply to this message to answer.")
+        forwarded = send(token, owner, f"❓ {name}{handle_name} (chat {chat['id']}):\n\n{text}\n\n↩️ Ответьте на это сообщение, чтобы ответить клиенту.")
         for part in forwarded:
             state["relay"][str(part["message_id"])] = {"chat_id": chat["id"], "message_id": msg["message_id"]}
         for stale in list(state["relay"])[:-MAX_RELAY]:
@@ -209,16 +209,16 @@ def run(token, owner, kb, args):
     try:
         me = api(token, "getMe")
     except TelegramError as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        print(f"ошибка: {exc}", file=sys.stderr)
         sys.exit(2)
-    print(f"@{me.get('username')} is running. KB entries: {len(kb['entries'])}. Owner relay: {'on' if owner else 'OFF'}.")
+    print(f"@{me.get('username')} работает. Записей в базе: {len(kb['entries'])}. Пересылка владельцу: {'включена' if owner else 'ВЫКЛЮЧЕНА'}.")
     while True:
         try:
             updates = api(token, "getUpdates",
                           {"offset": state.get("offset"), "timeout": 30, "allowed_updates": ["message"]}, timeout=40)
         except TelegramError as exc:
             if exc.code == 401:
-                print("error: token rejected (401)", file=sys.stderr)
+                print("ошибка: токен отклонён (401)", file=sys.stderr)
                 sys.exit(2)
             time.sleep(exc.retry_after or 5)
             continue
@@ -230,31 +230,31 @@ def run(token, owner, kb, args):
             try:
                 handle(token, owner, kb, state, update, args)
             except TelegramError as exc:
-                print(f"warning: update {update['update_id']}: {exc}", file=sys.stderr)
+                print(f"предупреждение: обновление {update['update_id']}: {exc}", file=sys.stderr)
                 if exc.retry_after:
                     time.sleep(exc.retry_after)
             save_state(args.state, state)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Telegram FAQ bot: answers from a KB file, relays the rest to the owner. "
-                                                 "Token and owner id come from TELEGRAM_BOT_TOKEN / TELEGRAM_OWNER_CHAT_ID.")
+    parser = argparse.ArgumentParser(description="Telegram-бот FAQ: отвечает из файла базы знаний, остальное пересылает владельцу. "
+                                                 "Токен и id владельца берутся из TELEGRAM_BOT_TOKEN / TELEGRAM_OWNER_CHAT_ID.")
     mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--sample", action="store_true", help="offline demo on an embedded KB (no network)")
-    mode.add_argument("--ask", metavar="TEXT", help="offline: what would the bot answer to TEXT (no network)")
-    mode.add_argument("--whoami", action="store_true", help="check the token with getMe")
-    mode.add_argument("--run", action="store_true", help="start the bot (long polling)")
-    parser.add_argument("--kb", help="knowledge-base JSON (faq-knowledge-base format); defaults to the sample KB for --sample/--ask")
-    parser.add_argument("--state", default="faq_bot_state.json", help="state file: polling offset, relay map, unanswered log")
-    parser.add_argument("--min-score", type=int, default=50, help="minimum match score 0-100 to answer from the KB")
-    parser.add_argument("--min-margin", type=int, default=10, help="minimum lead over the second-best entry")
-    parser.add_argument("--json", action="store_true", help="output as JSON (--sample / --ask)")
+    mode.add_argument("--sample", action="store_true", help="офлайн-демо на встроенной базе (без сети)")
+    mode.add_argument("--ask", metavar="TEXT", help="офлайн: что бот ответит на TEXT (без сети)")
+    mode.add_argument("--whoami", action="store_true", help="проверить токен через getMe")
+    mode.add_argument("--run", action="store_true", help="запустить бота (long polling)")
+    parser.add_argument("--kb", help="JSON базы знаний (формат faq-knowledge-base); для --sample/--ask по умолчанию встроенный пример")
+    parser.add_argument("--state", default="faq_bot_state.json", help="файл состояния: offset опроса, карта пересылок, журнал неотвеченных")
+    parser.add_argument("--min-score", type=int, default=50, help="минимальная оценка совпадения 0-100 для ответа из базы")
+    parser.add_argument("--min-margin", type=int, default=10, help="минимальный отрыв от второй лучшей записи")
+    parser.add_argument("--json", action="store_true", help="вывод в JSON (--sample / --ask)")
     args = parser.parse_args()
 
     try:
         kb = load_kb(args.kb) if args.kb else SAMPLE_KB
     except (OSError, json.JSONDecodeError, ValueError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        print(f"ошибка: {exc}", file=sys.stderr)
         sys.exit(2)
 
     if args.sample or args.ask:
@@ -264,35 +264,35 @@ def main():
             print(json.dumps(results if args.sample else results[0], indent=2, ensure_ascii=False))
         else:
             for r in results:
-                verdict = f"ANSWER ({r['entry_id']})" if r["answered"] else "RELAY TO OWNER"
-                print(f"{r['question']}\n  -> {verdict}; top: {r['top']}")
+                verdict = f"ОТВЕТ ({r['entry_id']})" if r["answered"] else "ПЕРЕСЛАТЬ ВЛАДЕЛЬЦУ"
+                print(f"{r['question']}\n  -> {verdict}; лучшие: {r['top']}")
                 if r["answer"]:
                     print(f"     {r['answer']}")
         sys.exit(0 if args.sample or results[0]["answered"] else 1)
 
     if not (args.whoami or args.run):
-        parser.error("choose one of --sample, --ask, --whoami, --run")
+        parser.error("выберите один из режимов: --sample, --ask, --whoami, --run")
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()  # noqa: SEC-AUDITOR - the bot's own token, sent only to Telegram
     if not token:
-        print("error: set TELEGRAM_BOT_TOKEN (from @BotFather) in the environment", file=sys.stderr)
+        print("ошибка: задайте TELEGRAM_BOT_TOKEN (от @BotFather) в окружении", file=sys.stderr)
         sys.exit(2)
     if args.whoami:
         try:
             me = api(token, "getMe")
         except (TelegramError, urllib.error.URLError, OSError) as exc:
-            print(f"error: {exc}", file=sys.stderr)
+            print(f"ошибка: {exc}", file=sys.stderr)
             sys.exit(2)
         print(json.dumps({"id": me["id"], "username": me.get("username")}) if args.json
               else f"OK: @{me.get('username')} (id {me['id']})")
         return
     if not args.kb:
-        print("error: --run needs --kb path/to/faq.json", file=sys.stderr)
+        print("ошибка: для --run нужен --kb путь/к/faq.json", file=sys.stderr)
         sys.exit(2)
     owner = os.environ.get("TELEGRAM_OWNER_CHAT_ID", "").strip() or None
     try:
         run(token, owner, kb, args)
     except KeyboardInterrupt:
-        print("stopped")
+        print("остановлен")
 
 
 if __name__ == "__main__":

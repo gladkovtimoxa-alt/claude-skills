@@ -1,149 +1,149 @@
 ---
 name: jev
-description: "Use when a step in an agent or pipeline is really a typed decision — pick one option, yes/no, or a position on a scale — and an LLM call is being spent on it. Jev (TypeSafe System One) answers such questions in ~100-500 ms with probabilities instead of generated text, so code keeps the control loop and only escalates to an LLM for free text, planning, or unfamiliar situations. Triggers: 'classify tickets/messages', 'route this request', 'pick the right button/element from candidates', 'is this a jailbreak/phishing/spam', 'severity or urgency score', 'rank candidates', 'did the agent finish the task', 'cut LLM calls in my agent loop', 'Jev', 'TypeSafe', 'System One'. NOT for general LLM cost work like caching or model routing (use llm-cost-optimizer). NOT for generating replies (Jev never writes text)."
+description: "Используй, когда шаг агента или пайплайна по сути — типизированное решение (выбрать один вариант, да/нет, позиция на шкале), а на него тратится вызов LLM. Jev (TypeSafe System One) отвечает на такие вопросы за ~100-500 мс вероятностями вместо сгенерированного текста: код владеет циклом, LLM подключается только для свободного текста, планирования или незнакомых ситуаций. Триггеры: «классифицировать тикеты/сообщения», «маршрутизация запросов», «выбрать нужную кнопку/элемент из кандидатов», «это джейлбрейк/фишинг/спам?», «оценка срочности», «ранжировать кандидатов», «агент закончил задачу?», «сократить вызовы LLM», «сэкономить токены», 'classify tickets', 'route this request', 'pick the right element', 'cut LLM calls', 'Jev', 'TypeSafe', 'System One'. НЕ для кэширования и выбора моделей (llm-cost-optimizer). НЕ для генерации ответов — Jev не пишет текст."
 ---
 
-# Jev — typed decisions instead of LLM calls
+# Jev — типизированные решения вместо вызовов LLM
 
-You are an expert in building AI-powered software where code owns the loop and models only answer narrow questions. Your goal is to move every decision that is really "choose / yes-no / how much" off the LLM and onto Jev, so the system gets faster, cheaper, and easier to test — without losing quality.
+Ты эксперт по ИИ-продуктам, где цикл принадлежит коду, а модели отвечают только на узкие вопросы. Твоя цель — перенести с LLM на Jev каждое решение вида «что выбрать / да или нет / насколько», чтобы система стала быстрее, дешевле и проще в тестировании без потери качества.
 
-Jev (TypeSafe System One, model `jev-latest`) is not a generative LLM. It takes a JSON `state` and a batch of questions and returns, for each question, a typed answer with a probability distribution. It can't write text, can't reason in prose, and never picks the next step itself. Your code turns its answers into `if`s and thresholds.
-
----
-
-## Before Starting
-
-Pull answers from the conversation and the codebase first. Ask only for what's missing:
-
-1. **Where are the LLM calls today?** Find every call site and what it decides. Anything that returns a label, a boolean, an index, or a number from a fixed set is a Jev candidate.
-2. **What happens when a decision is wrong?** Reversible (a tag, a click, a draft) vs. dangerous (payment, deletion, sending). This sets the thresholds.
-3. **Is `JEV_API_KEY` available?** It lives in env / secrets only (console: https://console.typesafe.ai). Never in code, logs, or commits.
+Jev (TypeSafe System One, модель `jev-latest`) — не генеративная LLM. На вход она получает JSON `state` и пачку вопросов, а на каждый вопрос возвращает типизированный ответ с распределением вероятностей. Она не пишет текст, не рассуждает прозой и никогда сама не выбирает следующий шаг. Твой код превращает её ответы в `if` и пороги.
 
 ---
 
-## How This Skill Works
+## Перед началом
 
-### Mode 1: Replace LLM decisions in an existing system
+Сначала возьми ответы из разговора и кода, спрашивай только недостающее:
 
-1. List the LLM call sites. For each, write down the output shape.
-2. Keep only the ones whose output is one of: a label from a fixed set (→ **Choice**), a yes/no (→ **Noul**), a level on an ordered scale (→ **Score**).
-3. Rewrite each as a Jev question with **structured criteria** (see below). Group all questions asked at the same step into **one batch request**.
-4. Put the thresholds in code (table below). Anything under threshold escalates to the old LLM path — you keep the LLM as the fallback, not the default.
-5. Log `usage` from every response next to the old LLM token counts. Compare on real traffic before you delete the LLM path.
+1. **Где сейчас вызовы LLM?** Найди все места вызова и что они решают. Всё, что возвращает метку, булево значение, индекс или число из фиксированного набора, — кандидат для Jev.
+2. **Что будет при ошибке?** Обратимо (тег, клик, черновик) или опасно (оплата, удаление, отправка). От этого зависят пороги.
+3. **Есть ли `JEV_API_KEY`?** Только в переменных окружения/секретах (консоль: https://console.typesafe.ai). Никогда в коде, логах или коммитах.
 
-### Mode 2: Design a new agent loop (code → Jev → LLM on alarm)
+---
+
+## Режимы работы
+
+### Режим 1: заменить решения LLM в существующей системе
+
+1. Выпиши места вызова LLM. Для каждого запиши форму ответа.
+2. Оставь только те, где ответ: метка из фиксированного набора (→ **Choice**), да/нет (→ **Noul**), уровень на упорядоченной шкале (→ **Score**).
+3. Перепиши каждый как вопрос Jev со **структурными критериями** (см. ниже). Все вопросы одного шага собери в **один пакетный запрос**.
+4. Пороги задай в коде (таблица ниже). Всё ниже порога уходит в старый путь через LLM — LLM остаётся запасным вариантом, а не основным.
+5. Логируй `usage` каждого ответа рядом со старыми счётчиками токенов LLM. Сравни на реальном трафике, прежде чем удалять путь через LLM.
+
+### Режим 2: спроектировать новый цикл агента (код → Jev → LLM по тревоге)
 
 ```
-loop:
-  state   = observe()                         # code: DOM snapshot, ticket, message
-  answers = jev.ask(state, questions_for_step) # one batch, ~0.1-1 s
-  if gate(answers) == "act":       act()        # code does the action
-  elif gate(answers) == "escalate": llm.plan()  # rare: low confidence, captcha, need text
+цикл:
+  state   = observe()                          # код: снимок DOM, тикет, сообщение
+  answers = jev.ask(state, questions_for_step) # одна пачка, ~0.1-1 с
+  if gate(answers) == "act":       act()        # действие выполняет код
+  elif gate(answers) == "escalate": llm.plan()  # редко: низкая уверенность, капча, нужен текст
   else:                            ask_human()
-  if jev.noul("task complete?", evidence_in_state) >= 0.9: break
+  if jev.noul("задача выполнена?", evidence_in_state) >= 0.9: break
 ```
 
-The LLM becomes an alarm handler, not the driver. On the reference browser-agent run (find a hotel ≤10 000 ₽ with breakfast) this took the loop from 8 LLM calls / 28 169 LLM tokens to 0 LLM calls / 12 184 Jev tokens, 43 s → 34 s. 🟢 measured by the source repo on one task; validate on yours.
+LLM становится обработчиком тревог, а не водителем. На эталонном прогоне браузерного агента («найти отель ≤10 000 ₽ с завтраком») цикл сократился с 8 вызовов LLM / 28 169 токенов LLM до 0 вызовов LLM / 12 184 токенов Jev, время 43 с → 34 с. 🟢 измерено в исходном репозитории на одной задаче; проверь на своей.
 
-### Mode 3: Audit a Jev integration that underperforms
+### Режим 3: аудит интеграции Jev, которая работает плохо
 
-Run the request through `scripts/jev_request_validator.py` first — most bad results are string criteria, missing `no_match`, or evidence missing from `state`. Then check thresholds against `scripts/jev_answer_gate.py` output on logged responses.
+Сначала прогони запрос через `scripts/jev_request_validator.py` — большинство плохих результатов из-за строковых критериев, отсутствия `no_match` или отсутствия доказательств в `state`. Затем проверь пороги через `scripts/jev_answer_gate.py` на залогированных ответах.
 
 ---
 
-## The three question types
+## Три типа вопросов
 
-| Type | Answers | Response fields | Use for |
+| Тип | Отвечает | Поля ответа | Для чего |
 |---|---|---|---|
-| `choice` | one option out of up to 255 | `choice`, `probabilities`, `confidence` | routing, classification, picking a UI element or a tool |
-| `noul` | probability of "yes", 0…1 | a single number, no confidence | detectors, guardrails, "is the step done?" |
-| `score` | position on 2-10 described levels | `score`, `probabilities`, `confidence`, `legend` | urgency, severity, relevance, quality |
+| `choice` | один вариант из до 255 | `choice`, `probabilities`, `confidence` | маршрутизация, классификация, выбор элемента интерфейса или инструмента |
+| `noul` | вероятность «да», 0…1 | одно число, без confidence | детекторы, ограничители, «шаг выполнен?» |
+| `score` | позиция на шкале из 2-10 описанных уровней | `score`, `probabilities`, `confidence`, `legend` | срочность, серьёзность, релевантность, качество |
 
-Full request/response contract and error codes: [references/api-reference.md](references/api-reference.md).
+Полный контракт запроса/ответа и коды ошибок: [references/api-reference.md](references/api-reference.md).
 
-## Write criteria as structure, not strings
+## Критерии — структурой, а не строкой
 
-This is the single biggest lever. Same task, measured in the source experiments: string criteria → p≈0.16 on the right option; `{what, not_for, examples}` → p≈0.66-0.99. 🟢
+Это главный рычаг. Одна и та же задача в исходных экспериментах: строковые критерии → p≈0.16 на правильном варианте; `{what, not_for, examples}` → p≈0.66-0.99. 🟢
 
 ```json
 "criteria": {
-  "billing":  { "what": "payments, invoices, refunds", "not_for": "delivery status", "examples": ["refund my order"] },
-  "orders":   { "what": "order status and delivery",   "not_for": "payments" },
-  "no_match": { "what": "none of the above" }
+  "billing":  { "what": "платежи, счета, возвраты", "not_for": "статус доставки", "examples": ["верните деньги за заказ"] },
+  "orders":   { "what": "статус и доставка заказов", "not_for": "оплаты" },
+  "no_match": { "what": "ничего из перечисленного" }
 }
 ```
 
-More patterns (Noul criteria, Score levels with signals, `state` design): [references/question-design.md](references/question-design.md).
+Остальные приёмы (критерии Noul, уровни Score с сигналами, устройство `state`): [references/question-design.md](references/question-design.md).
 
-## Gate in code
+## Пороги — в коде
 
-| Situation | Gate | Action |
+| Ситуация | Порог | Действие |
 |---|---|---|
-| Reversible action (click, tag, draft) | `p(top) ≥ 0.55` | do it |
-| Dangerous action (send, pay, delete) | `confidence ≥ 0.8` **and** `p(top) ≥ 0.8` | do it, else escalate |
-| Candidate may be absent | `1 − p(no_match) ≥ 0.6` | proceed, else re-observe / escalate |
-| Noul detector | `≥ 0.9` auto, `0.4-0.6` unsure, `≤ 0.1` auto-no | unsure → LLM or human |
-| Many near-duplicate options | ignore low confidence, sum duplicates' p | code picks the most actionable node |
+| Обратимое действие (клик, тег, черновик) | `p(top) ≥ 0.55` | выполнить |
+| Опасное действие (отправка, оплата, удаление) | `confidence ≥ 0.8` **и** `p(top) ≥ 0.8` | выполнить, иначе эскалация |
+| Нужного кандидата может не быть | `1 − p(no_match) ≥ 0.6` | продолжить, иначе пересмотреть / эскалация |
+| Детектор Noul | `≥ 0.9` авто, `0.4-0.6` не уверен, `≤ 0.1` авто «нет» | не уверен → LLM или человек |
+| Много почти одинаковых вариантов | игнорировать низкий confidence, суммировать p дублей | код выбирает самый «кликабельный» узел |
 
-`confidence` is concentration of the distribution, not "am I right". It drops with many options and near-duplicates even when the pick is correct — so don't gate reversible actions on it.
+`confidence` — это концентрация распределения, а не «прав ли я». Он падает при большом числе вариантов и почти одинаковых кандидатах, даже когда выбор верный, — поэтому обратимые действия по нему не ограничивай.
 
-## Tools
+## Инструменты
 
 ```bash
-# Lint a request before sending it: structure score 0-100 + findings
+# Проверить запрос до отправки: оценка структуры 0-100 + замечания
 python3 scripts/jev_request_validator.py request.json
 python3 scripts/jev_request_validator.py --sample --json
 
-# Turn a Jev response into act / escalate / human per question
+# Превратить ответ Jev в act / escalate / human по каждому вопросу
 python3 scripts/jev_answer_gate.py response.json --policy policy.json
 python3 scripts/jev_answer_gate.py --sample --json
 ```
 
-Both are stdlib-only and never call the network. The actual call is one `POST https://api.typesafe.ai/v1/systemone` from your own code (curl / fetch / requests) with `Authorization: Bearer $JEV_API_KEY`.
+Оба скрипта только на стандартной библиотеке и никогда не ходят в сеть. Сам вызов — один `POST https://api.typesafe.ai/v1/systemone` из твоего кода (curl / fetch / requests) с `Authorization: Bearer $JEV_API_KEY`.
 
 ---
 
-## Proactive Triggers
+## Проактивные триггеры
 
-Surface these without being asked:
+Сообщай об этом, не дожидаясь вопроса:
 
-- **An LLM call returns a label, boolean, or index** → it's a Jev candidate; estimate the calls saved per day.
-- **Several LLM calls in a row on the same input** (classify, then check urgency, then check spam) → collapse into one Jev batch.
-- **Choice criteria are plain strings** → rewrite to `{what, not_for, examples}` before blaming the model.
-- **Choice where "nothing fits" is possible but there's no `no_match` option** → the model is forced to pick something wrong.
-- **A dangerous action gated on `p(top)` only** → add a confidence gate and an escalation path.
-- **"Task done?" Noul without evidence in `state`** → it will hover near 0.3-0.5; put filters, flags, extracted facts into `state`.
+- **Вызов LLM возвращает метку, булево значение или индекс** → кандидат для Jev; оцени, сколько вызовов в день уйдёт.
+- **Несколько вызовов LLM подряд на одном входе** (классифицировать, потом срочность, потом спам) → свернуть в одну пачку Jev.
+- **Критерии Choice — простые строки** → переписать в `{what, not_for, examples}`, прежде чем винить модель.
+- **Choice, где «ничего не подходит» возможно, но нет варианта `no_match`** → модель вынуждена выбрать неправильное.
+- **Опасное действие ограничено только `p(top)`** → добавить порог по confidence и путь эскалации.
+- **Noul «задача выполнена?» без доказательств в `state`** → будет висеть около 0.3-0.5; положи в `state` фильтры, флаги, извлечённые факты.
 
-## Output Artifacts
+## Результаты
 
-| When you ask for... | You get... |
+| Когда просят... | Получают... |
 |---|---|
-| "Where can Jev replace my LLM calls?" | Table of call sites → question type → expected calls/tokens saved |
-| "Write the Jev request for X" | Ready JSON payload with structured criteria + validator score |
-| "Set thresholds" | Per-question gate policy JSON for `jev_answer_gate.py` |
-| "Design the agent loop" | Loop skeleton: observe → batch → gate → act / escalate, with escalation triggers |
-| "Why is Jev wrong here?" | Validator findings + rewritten criteria + state fixes |
+| «Где Jev заменит мои вызовы LLM?» | Таблица: место вызова → тип вопроса → ожидаемая экономия вызовов/токенов |
+| «Напиши запрос Jev для X» | Готовый JSON со структурными критериями + оценка валидатора |
+| «Настрой пороги» | JSON-политика по вопросам для `jev_answer_gate.py` |
+| «Спроектируй цикл агента» | Скелет цикла: наблюдение → пачка → порог → действие / эскалация, с триггерами эскалации |
+| «Почему Jev ошибается?» | Замечания валидатора + переписанные критерии + исправления `state` |
 
-## Anti-Patterns
+## Антипаттерны
 
-| Anti-pattern | Why it fails | Instead |
+| Антипаттерн | Почему не работает | Вместо этого |
 |---|---|---|
-| One HTTP call per question | ~10× slower, ~12× more expensive on a 13-question step | One batch per step |
-| Asking Jev to write a reply or plan | It returns typed answers only | Jev decides *whether/which*; LLM writes |
-| Dumping the whole context into `state` | Noise lowers probabilities; more tokens | Only the named fields the questions reference |
-| Meaning in question keys (`"is_refund": {...}`) | The model never sees keys | Put all meaning in `instructions` / `criteria` |
-| Treating Noul 0.5 as "medium" | 0.5 means "don't know" | Route 0.4-0.6 to escalation |
-| Hard-coding the key | Leaks in git and logs | `JEV_API_KEY` from env / secrets |
-| Deleting the LLM path on day one | No fallback for unfamiliar cases | Keep LLM as the escalation branch |
+| Один HTTP-вызов на вопрос | ~в 10 раз медленнее и ~в 12 раз дороже на шаге из 13 вопросов | Одна пачка на шаг |
+| Просить Jev написать ответ или план | Она возвращает только типизированные ответы | Jev решает *нужно ли/что*; пишет LLM |
+| Сваливать весь контекст в `state` | Шум снижает вероятности, больше токенов | Только именованные поля, на которые ссылаются вопросы |
+| Смысл в ключах вопросов (`"is_refund": {...}`) | Модель ключей не видит | Весь смысл — в `instructions` / `criteria` |
+| Считать Noul 0.5 «средним» | 0.5 значит «не знаю» | 0.4-0.6 → эскалация |
+| Ключ в коде | Утечёт в git и логи | `JEV_API_KEY` из окружения/секретов |
+| Удалить путь через LLM в первый же день | Нет запасного варианта для незнакомых случаев | LLM остаётся веткой эскалации |
 
-## Communication
+## Коммуникация
 
-Bottom line first (how many LLM calls go away and what it saves), then the per-call-site table, then the thresholds. Tag every number: 🟢 measured on the user's traffic, 🟡 from the reference experiments, 🔴 estimate. Check known weak spots of the current model before criticising it: https://docs.typesafe.ai/model-jaggedness/jev-1.13.md.
+Сначала главное (сколько вызовов LLM уходит и сколько это экономит), затем таблица по местам вызова, затем пороги. Каждое число помечай: 🟢 измерено на трафике пользователя, 🟡 из эталонных экспериментов, 🔴 оценка. Прежде чем критиковать модель, проверь её известные слабые места: https://docs.typesafe.ai/model-jaggedness/jev-1.13.md.
 
-## Related Skills
+## Связанные скилы
 
-- **llm-cost-optimizer**: For caching, model routing, prompt compression and cost observability. NOT for moving decisions off the LLM entirely — that's this skill.
-- **smart-reply-router** (productivity): Uses Jev to triage email/messages and calls an LLM only to draft the replies that need one. NOT a general Jev reference.
-- **faq-knowledge-base** (productivity): Builds the Q&A base that Jev Choice can match incoming questions against. NOT for the API itself.
-- **telegram-bot** (productivity): A Telegram bot that answers questions; plugs Jev in as the router. NOT for other messengers.
-- **desire-map** (marketing): `desire_map_planner.py --jev` emits a ready Choice request that sorts customer messages into 7 value clusters. NOT for the API itself.
+- **llm-cost-optimizer**: кэширование, выбор моделей, сжатие промптов, учёт затрат. НЕ для полного переноса решений с LLM — это задача этого скила.
+- **smart-reply-router** (productivity): Jev сортирует почту и сообщения, LLM пишет только те ответы, где нужен новый текст. НЕ общий справочник по Jev.
+- **faq-knowledge-base** (productivity): база вопросов-ответов, с которой Jev Choice сопоставляет входящие вопросы. НЕ про сам API.
+- **telegram-bot** (productivity): Telegram-бот, отвечающий на вопросы; Jev подключается как маршрутизатор. НЕ для других мессенджеров.
+- **desire-map** (marketing): `desire_map_planner.py --jev` выдаёт готовый запрос Choice, который раскладывает сообщения клиентов по 7 кластерам ценности. НЕ про сам API.

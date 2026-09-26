@@ -1,98 +1,98 @@
-# Designing Jev questions
+# Как составлять вопросы для Jev
 
-How to phrase questions so the right answer gets a high probability. Everything here comes from measured runs in the reference experiments (https://github.com/gmoreva/jev-scripts) plus the official guide https://docs.typesafe.ai/primitives/advanced.md.
+Как формулировать вопросы, чтобы правильный ответ получал высокую вероятность. Всё здесь — из замеров в эталонных экспериментах (https://github.com/gmoreva/jev-scripts) и официального руководства https://docs.typesafe.ai/primitives/advanced.md.
 
 ## 1. Choice
 
-**Contrast beats labels.** Give each option what it covers, what it does *not* cover, and one or two real examples in the user's own words.
+**Контраст важнее названий.** Для каждого варианта укажи, что он покрывает, что к нему *не* относится, и один-два реальных примера словами пользователя.
 
 ```json
 {
   "type": "choice",
-  "instructions": "Which team should handle `ticket.text`?",
+  "instructions": "Какой отдел должен обработать `ticket.text`?",
   "criteria": {
-    "billing":   { "what": "payments, invoices, refunds, charges", "not_for": "where is my parcel", "examples": ["charged twice", "refund please"] },
-    "delivery":  { "what": "shipping status, lost or late parcels", "not_for": "refunds", "examples": ["parcel hasn't arrived"] },
-    "account":   { "what": "login, password, profile, 2FA", "not_for": "payment cards" },
-    "no_match":  { "what": "anything else, spam, empty or unclear message" }
+    "billing":   { "what": "платежи, счета, возвраты, списания", "not_for": "где моя посылка", "examples": ["списали дважды", "верните деньги"] },
+    "delivery":  { "what": "статус доставки, потерянные или задержанные посылки", "not_for": "возвраты", "examples": ["посылка не пришла"] },
+    "account":   { "what": "вход, пароль, профиль, 2FA", "not_for": "банковские карты" },
+    "no_match":  { "what": "всё остальное, спам, пустое или непонятное сообщение" }
   }
 }
 ```
 
-Rules:
+Правила:
 
-- Always add `no_match` (or `none`) when "nothing fits" is a valid outcome. Use `1 − p(no_match)` as "is the answer even here?".
-- Up to 255 options. With many options (UI elements) expect lower `confidence` — gate on `p(top)` instead.
-- Picking a UI element: options are element refs (`e12`, `e57`), criteria are their visible text + role + position. Prioritise in-viewport elements, de-duplicate by text, cap around 150 candidates.
-- Near-duplicate options honestly split probability. Let code merge them (sum p) and pick the most actionable node.
+- Всегда добавляй `no_match` (или `none`), если «ничего не подходит» — допустимый исход. `1 − p(no_match)` отвечает на вопрос «есть ли ответ вообще среди вариантов?».
+- До 255 вариантов. При многих вариантах (элементы интерфейса) `confidence` будет ниже — ограничивай по `p(top)`.
+- Выбор элемента интерфейса: варианты — ссылки на элементы (`e12`, `e57`), критерии — их видимый текст, роль и положение. Приоритет — элементам в видимой области, дубли по тексту убирай, ограничься примерно 150 кандидатами.
+- Почти одинаковые варианты честно делят вероятность. Пусть код объединяет их (сумма p) и выбирает самый подходящий для действия узел.
 
 ## 2. Noul
 
-A single probability of "yes". No confidence field. 0.5 means "I don't know", not "somewhat".
+Одна вероятность «да». Поля confidence нет. 0.5 значит «не знаю», а не «отчасти».
 
 ```json
 {
   "type": "noul",
-  "instructions": "Does `page` show that the search task is complete?",
+  "instructions": "Показывает ли `page`, что задача поиска выполнена?",
   "criteria": {
-    "true":  "results list is visible AND filters `price_max` and `breakfast` are applied AND at least one card matches",
-    "false": "search form still open, filters missing, or no matching cards"
+    "true":  "виден список результатов И применены фильтры `price_max` и `breakfast` И хотя бы одна карточка подходит",
+    "false": "форма поиска ещё открыта, фильтров нет или подходящих карточек нет"
   }
 }
 ```
 
-Rules:
+Правила:
 
-- **Evidence in state.** "Task done?" with applied filters and per-card flags in `state` → 0.93+. Without them → ~0.3. Extract the facts in code first, then ask.
-- Multi-label = one Noul per label, all in the same batch.
-- Typical thresholds: `≥ 0.9` act, `≤ 0.1` act as "no", `0.4-0.6` escalate.
+- **Доказательства — в state.** «Задача выполнена?» с применёнными фильтрами и флагами по карточкам в `state` → 0.93+. Без них → около 0.3. Сначала извлеки факты кодом, потом спрашивай.
+- Несколько меток = по одному Noul на метку, все в одной пачке.
+- Типичные пороги: `≥ 0.9` действовать, `≤ 0.1` действовать как «нет», `0.4-0.6` — эскалация.
 
 ## 3. Score
 
-Ordered levels, 2 to 10, each described as a situation with signals — never as a bare number.
+Упорядоченные уровни, от 2 до 10, каждый описан как ситуация с сигналами — никогда не голым числом.
 
 ```json
 {
   "type": "score",
-  "instructions": "How urgent is `ticket.text` for the customer?",
+  "instructions": "Насколько срочен `ticket.text` для клиента?",
   "criteria": [
-    { "what": "Normal",   "signals": ["question or request, work not blocked"] },
-    { "what": "Urgent",   "signals": ["blocks part of their work", "needs an answer today"] },
-    { "what": "Critical", "signals": ["work fully stopped", "money or data at risk", "legal threat"] }
+    { "what": "Обычная",  "signals": ["вопрос или просьба, работа не стоит"] },
+    { "what": "Срочно",   "signals": ["блокирует часть работы", "нужен ответ сегодня"] },
+    { "what": "Критично", "signals": ["работа полностью стоит", "под угрозой деньги или данные", "угроза суда"] }
   ]
 }
 ```
 
-The answer can land between levels (1.4 = between Urgent and Critical). For ranking N items, ask one Score per item on the same axis in one batch, then sort.
+Ответ может оказаться между уровнями (1.4 = между «Срочно» и «Критично»). Чтобы ранжировать N объектов, задай по одному Score на объект по одной оси в одной пачке, затем отсортируй.
 
 ## 4. State
 
-- Named fields, only what questions reference: `{"ticket": {...}, "customer": {"plan": "pro"}}`.
-- Reference nested values in instructions with backticks.
-- Pre-compute facts in code (dates, totals, flags). Jev judges meaning; it shouldn't do arithmetic.
-- Keep PII out unless a question needs it.
+- Именованные поля, только то, на что ссылаются вопросы: `{"ticket": {...}, "customer": {"plan": "pro"}}`.
+- На вложенные значения ссылайся в инструкциях через обратные кавычки.
+- Факты считай заранее кодом (даты, суммы, флаги). Jev оценивает смысл, арифметику ей делать не надо.
+- Не клади персональные данные, если вопросу они не нужны.
 
-## 5. Batching a step
+## 5. Пачка на шаг
 
-Put every question you need at one step into one request:
+Все вопросы одного шага — в один запрос:
 
 ```json
 {
   "model": "jev-latest",
   "state": { "message": { "text": "..." } },
   "questions": {
-    "intent":   { "type": "choice", "instructions": "...", "criteria": { } },
-    "urgency":  { "type": "score",  "instructions": "...", "criteria": [ ] },
-    "is_spam":  { "type": "noul",   "instructions": "...", "criteria": { } },
-    "needs_human": { "type": "noul", "instructions": "...", "criteria": { } }
+    "intent":      { "type": "choice", "instructions": "...", "criteria": { } },
+    "urgency":     { "type": "score",  "instructions": "...", "criteria": [ ] },
+    "is_spam":     { "type": "noul",   "instructions": "...", "criteria": { } },
+    "needs_human": { "type": "noul",   "instructions": "...", "criteria": { } }
   }
 }
 ```
 
-One request with 13 questions ≈ 12× cheaper and 10× faster than 13 requests. Questions can't see each other's answers — if one depends on another, split into two steps.
+Один запрос на 13 вопросов ≈ в 12 раз дешевле и в 10 раз быстрее, чем 13 отдельных. Вопросы не видят ответов друг друга — если один зависит от другого, разбей на два шага.
 
-## 6. When NOT to use Jev
+## 6. Когда Jev НЕ нужна
 
-- The output is free text (reply, summary, code) → LLM.
-- The options aren't known in advance and can't be enumerated → LLM.
-- Multi-step reasoning or planning in an unfamiliar situation → LLM, then come back to Jev for the next routine decision.
+- Нужен свободный текст (ответ, пересказ, код) → LLM.
+- Варианты заранее неизвестны и их нельзя перечислить → LLM.
+- Многошаговые рассуждения или планирование в незнакомой ситуации → LLM, а для следующего рутинного решения — снова Jev.

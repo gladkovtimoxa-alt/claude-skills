@@ -1,29 +1,29 @@
-# Telegram Bot API essentials
+# Основы Telegram Bot API
 
-Official documentation: https://core.telegram.org/bots/api (methods, types) and https://core.telegram.org/bots/features (BotFather, privacy mode, commands).
+Официальная документация: https://core.telegram.org/bots/api (методы, типы) и https://core.telegram.org/bots/features (BotFather, режим приватности, команды).
 
-## Setup with @BotFather
+## Настройка через @BotFather
 
-1. Open @BotFather → `/newbot` → name → username ending in `bot`.
-2. Copy the token **straight into a secret / env var** `TELEGRAM_BOT_TOKEN`. Don't paste it into chats.
-3. Optional: `/setdescription`, `/setabouttext`, `/setuserpic`, `/setcommands` (e.g. `start - Start`, `help - What I can do`).
-4. Leaked token → `/revoke` in @BotFather, set the new one.
+1. Откройте @BotFather → `/newbot` → имя → username, оканчивающийся на `bot`.
+2. Скопируйте токен **сразу в секрет / переменную окружения** `TELEGRAM_BOT_TOKEN`. Не вставляйте его в чаты.
+3. По желанию: `/setdescription`, `/setabouttext`, `/setuserpic`, `/setcommands` (например, `start - Начать`, `help - Что я умею`).
+4. Токен утёк → `/revoke` в @BotFather и задайте новый.
 
-## Methods the bot uses
+## Методы, которые использует бот
 
-All calls: `POST https://api.telegram.org/bot<TOKEN>/<method>` with a JSON body. Every response is `{"ok": true, "result": ...}` or `{"ok": false, "error_code": N, "description": "...", "parameters": {"retry_after": S}}`.
+Все вызовы: `POST https://api.telegram.org/bot<TOKEN>/<method>` с JSON-телом. Каждый ответ — `{"ok": true, "result": ...}` или `{"ok": false, "error_code": N, "description": "...", "parameters": {"retry_after": S}}`.
 
-| Method | Use | Key params |
+| Метод | Для чего | Ключевые параметры |
 |---|---|---|
-| `getMe` | Check the token | — |
-| `getUpdates` | Long polling | `offset` (last `update_id` + 1), `timeout` (seconds to hold the connection), `allowed_updates` |
-| `sendMessage` | Reply | `chat_id`, `text` (≤ 4096 chars), `reply_parameters: {message_id}`, optional `parse_mode` |
-| `setWebhook` / `deleteWebhook` | Switch to / from webhooks | `url`, `secret_token` |
-| `answerCallbackQuery` | Acknowledge inline-button taps | `callback_query_id` |
+| `getMe` | Проверить токен | — |
+| `getUpdates` | Long polling | `offset` (последний `update_id` + 1), `timeout` (сколько секунд держать соединение), `allowed_updates` |
+| `sendMessage` | Ответ | `chat_id`, `text` (≤ 4096 символов), `reply_parameters: {message_id}`, необязательный `parse_mode` |
+| `setWebhook` / `deleteWebhook` | Переключиться на вебхук / обратно | `url`, `secret_token` |
+| `answerCallbackQuery` | Подтвердить нажатие inline-кнопки | `callback_query_id` |
 
-`getUpdates` and a webhook are mutually exclusive: if a webhook is set, polling returns 409. `deleteWebhook` first.
+`getUpdates` и вебхук взаимоисключающие: если вебхук установлен, опрос вернёт 409. Сначала `deleteWebhook`.
 
-## Update shape (the parts that matter)
+## Структура обновления (важные части)
 
 ```json
 {
@@ -32,35 +32,35 @@ All calls: `POST https://api.telegram.org/bot<TOKEN>/<method>` with a JSON body.
     "message_id": 55,
     "date": 1790000000,
     "chat": { "id": 123456789, "type": "private" },
-    "from": { "id": 123456789, "first_name": "Ann", "username": "ann" },
-    "text": "How much is the pro plan?",
+    "from": { "id": 123456789, "first_name": "Анна", "username": "anna" },
+    "text": "Сколько стоит тариф Pro?",
     "reply_to_message": { "message_id": 54 }
   }
 }
 ```
 
-`chat.type` is `private`, `group`, `supergroup`, or `channel`. Always confirm the update by moving `offset` past it, or Telegram redelivers it.
+`chat.type` — `private`, `group`, `supergroup` или `channel`. Всегда подтверждайте обновление, сдвигая `offset` за него, иначе Telegram пришлёт его снова.
 
-## Limits
+## Лимиты
 
-| Limit | Value |
+| Лимит | Значение |
 |---|---|
-| Messages to one chat | ~1 per second |
-| Messages overall | ~30 per second |
-| Messages to one group | 20 per minute |
-| Message length | 4096 characters (split longer ones) |
+| Сообщений в один чат | ~1 в секунду |
+| Сообщений всего | ~30 в секунду |
+| Сообщений в одну группу | 20 в минуту |
+| Длина сообщения | 4096 символов (длиннее — делить) |
 
-On `429` read `parameters.retry_after` and sleep that long.
+На `429` прочитайте `parameters.retry_after` и подождите столько секунд.
 
-## Formatting
+## Форматирование
 
-Plain text is safest. With `parse_mode: "MarkdownV2"` these characters must be escaped with `\`: `_ * [ ] ( ) ~ ` > # + - = | { } . !`. A single unescaped `.` makes the whole send fail with 400. `HTML` mode needs only `<`, `>`, `&` escaped.
+Безопаснее всего простой текст. С `parse_mode: "MarkdownV2"` эти символы нужно экранировать `\`: `_ * [ ] ( ) ~ ` > # + - = | { } . !`. Одна неэкранированная `.` — и отправка целиком падает с 400. В режиме `HTML` экранируются только `<`, `>`, `&`.
 
-## Groups and privacy mode
+## Группы и режим приватности
 
-By default a bot in a group only sees commands and replies to its own messages (privacy mode on). To answer free-text questions in a group, turn privacy mode off in @BotFather (`/setprivacy`) — then it sees every message, so be explicit with the group about it. `faq_bot.py` ignores groups entirely; extend `handle()` if needed.
+По умолчанию бот в группе видит только команды и ответы на свои сообщения (режим приватности включён). Чтобы отвечать на свободные вопросы в группе, выключите режим приватности в @BotFather (`/setprivacy`) — тогда бот видит все сообщения, так что прямо скажите об этом группе. `faq_bot.py` группы полностью игнорирует; при необходимости доработайте `handle()`.
 
-## Webhook (only when polling isn't enough)
+## Вебхук (только когда опроса не хватает)
 
 ```bash
 curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
@@ -68,9 +68,9 @@ curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
   -d secret_token="$TELEGRAM_WEBHOOK_SECRET"
 ```
 
-Requirements: public HTTPS on port 443, 80, 88 or 8443; check the `X-Telegram-Bot-Api-Secret-Token` header on every request and reject mismatches; answer `200` fast and do the work asynchronously.
+Требования: публичный HTTPS на порту 443, 80, 88 или 8443; проверяйте заголовок `X-Telegram-Bot-Api-Secret-Token` в каждом запросе и отклоняйте несовпадения; отвечайте `200` быстро, а работу делайте асинхронно.
 
-## Running it for real
+## Запуск по-настоящему
 
 **systemd (VPS)**
 
@@ -92,7 +92,7 @@ User=faqbot
 WantedBy=multi-user.target
 ```
 
-`/etc/faq-bot.env` holds `TELEGRAM_BOT_TOKEN=...` and `TELEGRAM_OWNER_CHAT_ID=...`, mode `600`, owned by root.
+`/etc/faq-bot.env` содержит `TELEGRAM_BOT_TOKEN=...` и `TELEGRAM_OWNER_CHAT_ID=...`, права `600`, владелец root.
 
 **Docker**
 
@@ -103,19 +103,19 @@ docker run -d --restart=always --name faq-bot \
   python faq_bot.py --run --kb faq.json --state /app/state/state.json
 ```
 
-## Extending with Jev and an LLM
+## Расширение с Jev и LLM
 
-`faq_bot.py` is deliberately AI-free. Add AI in `handle()`, at the point where `match()` returns `answered: false`:
+`faq_bot.py` намеренно без ИИ. Добавляйте ИИ в `handle()`, в месте, где `match()` возвращает `answered: false`:
 
 ```python
 result = match(kb, text, args.min_score, args.min_margin)
 if not result["answered"] and os.environ.get("JEV_API_KEY"):
-    # One Jev Choice over KB ids + no_match (see engineering/jev).
+    # Один Choice Jev по id записей базы + no_match (см. engineering/jev).
     jev = jev_ask({"question": {"text": text}}, {"faq": {
         "type": "choice",
-        "instructions": "Which entry fully answers `question.text`? no_match if none does.",
+        "instructions": "Какая запись полностью отвечает на `question.text`? no_match, если ни одна.",
         "criteria": {e["id"]: {"what": e["question"], "examples": e.get("phrasings", [])[:3]} for e in kb["entries"]}
-                    | {"no_match": {"what": "no entry answers it completely"}},
+                    | {"no_match": {"what": "ни одна запись не отвечает полностью"}},
     }})
     faq = jev["answers"]["faq"]
     top = faq["choice"]
@@ -124,4 +124,4 @@ if not result["answered"] and os.environ.get("JEV_API_KEY"):
                   "answer": next(e["answer"] for e in kb["entries"] if e["id"] == top)}
 ```
 
-For an LLM draft, generate it only for questions that are still unanswered, and **send the draft to the owner** together with the forwarded question ("Draft: … — reply to send your own version"). The owner's reply is what reaches the client, through the existing relay. Keep `max_tokens` capped and give the LLM only the question plus the top 3 KB entries.
+Черновик LLM генерируйте только для вопросов, которые так и остались без ответа, и **отправляйте его владельцу** вместе с пересланным вопросом («Черновик: … — ответьте на сообщение, чтобы отправить свой вариант»). Клиенту уходит ответ владельца — через уже работающую пересылку. Ограничьте `max_tokens` и давайте LLM только вопрос и 3 лучшие записи базы.

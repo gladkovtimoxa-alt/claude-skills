@@ -1,6 +1,6 @@
-# Routing policy
+# Политика маршрутизации
 
-`reply_route_planner.py` reads a policy JSON. Every field is optional; defaults are shown.
+`reply_route_planner.py` читает JSON-политику. Все поля необязательны; ниже значения по умолчанию.
 
 ```json
 {
@@ -18,31 +18,31 @@
 }
 ```
 
-| Field | Meaning |
+| Поле | Значение |
 |---|---|
-| `mode` | `draft` — nothing is sent, everything becomes a draft. `auto` — FAQ templates for `auto_send_intents` may be sent. |
-| `red_line_intents` | Intents that always go to the human, whatever the other answers say. |
-| `auto_send_intents` | Whitelist for sending FAQ templates in `auto` mode. Red-line intents are removed from it even if listed. |
-| `spam` | `is_spam ≥` this → `ignore`. |
-| `needs_human` | `needs_human ≥` this → `human`. |
-| `intent_min_p` | If the intent's top probability is lower, the intent is treated as uncertain and the message is never auto-sent. |
-| `faq_min_p` | `faq_match` top probability needed to answer with a template. |
-| `faq_min_presence` | `1 − p(no_match)` needed on `faq_match`. |
-| `critical_urgency` | Score at or above this (0-based level index, e.g. 1.5 = between Urgent and Critical on a 3-level scale) → `human`. |
+| `mode` | `draft` — ничего не отправляется, всё становится черновиком. `auto` — шаблоны FAQ для `auto_send_intents` можно отправлять. |
+| `red_line_intents` | Намерения, которые всегда идут человеку, что бы ни говорили остальные ответы. |
+| `auto_send_intents` | Список разрешённых для автоотправки шаблонов FAQ в режиме `auto`. Красные линии из него удаляются, даже если перечислены. |
+| `spam` | `is_spam ≥` этого значения → `ignore`. |
+| `needs_human` | `needs_human ≥` этого значения → `human`. |
+| `intent_min_p` | Если верхняя вероятность намерения ниже, намерение считается неуверенным, и сообщение никогда не отправляется автоматически. |
+| `faq_min_p` | Верхняя вероятность `faq_match`, нужная для ответа шаблоном. |
+| `faq_min_presence` | Нужное значение `1 − p(no_match)` для `faq_match`. |
+| `critical_urgency` | Оценка на этом уровне или выше (индекс уровня с 0, например 1.5 = между «Срочно» и «Критично» на шкале из 3 уровней) → `human`. |
 
-## Rule order
+## Порядок правил
 
 1. `is_spam ≥ spam` → **ignore**
-2. intent is a red line (top pick, or any red-line intent with p ≥ 0.3) → **human**
+2. намерение — красная линия (верхний выбор или любое намерение-красная линия с p ≥ 0.3) → **human**
 3. `needs_human ≥ needs_human` → **human**
 4. `urgency.score ≥ critical_urgency` → **human**
-5. FAQ gate passes (`faq_min_p` and `faq_min_presence`, top is not `no_match`) → **faq_template**; `send = true` only if `mode = auto`, intent in the whitelist, and `intent_min_p` passed
-6. otherwise → **llm_draft** (never sent automatically)
+5. порог FAQ пройден (`faq_min_p` и `faq_min_presence`, верхний выбор не `no_match`) → **faq_template**; `send = true` только при `mode = auto`, намерении из разрешённого списка и пройденном `intent_min_p`
+6. иначе → **llm_draft** (никогда не отправляется автоматически)
 
-The "any red-line intent with p ≥ 0.3" check is deliberate: when a message is 60% `pricing` and 35% `refund`, it's safer to show it to the human than to auto-answer the pricing half.
+Проверка «любая красная линия с p ≥ 0.3» — намеренная: когда сообщение на 60% `pricing` и на 35% `refund`, безопаснее показать его человеку, чем автоматически ответить на ценовую часть.
 
-## Why these defaults
+## Почему такие значения по умолчанию
 
-- `faq_min_p` 0.75 is higher than the generic reversible gate (0.55) because a wrong template is visible to a customer, not just an internal tag.
-- LLM drafts are never auto-sent: the LLM can invent prices, dates, and promises. A human skims the draft; that costs seconds.
-- Red lines win over everything because the cost of a wrong refund or legal answer is asymmetric.
+- `faq_min_p` 0.75 выше общего порога для обратимых действий (0.55), потому что неверный шаблон видит клиент, а не только внутренний тег.
+- Черновики LLM никогда не отправляются автоматически: LLM может выдумать цены, даты и обещания. Человек просматривает черновик — это секунды.
+- Красные линии важнее всего, потому что цена ошибки в возврате или юридическом ответе несоизмерима.

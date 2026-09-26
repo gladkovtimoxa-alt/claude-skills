@@ -1,6 +1,6 @@
 {
   "name": "faq-knowledge-base",
-  "description": "Build and maintain the question/answer knowledge base that bots and auto-replies answer from: mine real questions, write short answers with review dates, collect customers' own phrasings, lint for duplicates, empty answers, stale facts and confusable entries (0-100), and measure coverage on real traffic with clusters of unanswered questions. JSON format shared with telegram-bot and smart-reply-router.",
+  "description": "Сбор и поддержка базы вопросов и ответов, из которой отвечают боты и автоответчики: извлечь реальные вопросы, написать короткие ответы с датами пересмотра, собрать формулировки клиентов, найти дубли, пустые ответы, устаревшие факты и путаемые записи (оценка 0-100), измерить покрытие на реальном потоке и сгруппировать неотвеченные вопросы. JSON-формат общий с telegram-bot и smart-reply-router.",
   "version": "2.12.0",
   "author": {
     "name": "gladkovtimoxa-alt",

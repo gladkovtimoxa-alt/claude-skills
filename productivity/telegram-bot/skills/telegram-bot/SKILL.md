@@ -1,117 +1,117 @@
 ---
 name: telegram-bot
-description: "Use when someone wants a Telegram bot that answers questions on their behalf through the official Telegram Bot API: set up the token via @BotFather, answer known questions from a knowledge-base file with zero AI tokens, relay unknown questions to the owner and send the owner's reply back, then optionally add Jev routing and LLM drafts. Includes a runnable stdlib bot (long polling, no public URL needed). Triggers: 'make a Telegram bot', 'bot that answers my clients', 'answer questions in Telegram', 'Telegram auto-reply', 'forward Telegram questions to me', 'BotFather token', 'Telegram webhook'. NOT for email or Slack (use smart-reply-router). NOT for reading or sending from a personal Telegram account — only bots via the official Bot API."
+description: "Используй, когда нужен Telegram-бот, который отвечает на вопросы от имени владельца через официальный Telegram Bot API: получить токен у @BotFather, отвечать на известные вопросы из файла базы знаний без затрат на ИИ, пересылать неизвестные вопросы владельцу и возвращать его ответ спросившему, затем при желании добавить маршрутизацию Jev и черновики LLM. В комплекте рабочий бот на стандартной библиотеке Python (long polling, публичный URL не нужен). Триггеры: «сделай Telegram-бота», «бот, который отвечает клиентам», «отвечать на вопросы в Telegram», «автоответ в Telegram», «пересылать вопросы из Telegram мне», «токен BotFather», «вебхук Telegram», 'make a Telegram bot', 'bot that answers my clients', 'Telegram auto-reply', 'BotFather token'. НЕ для почты и Slack (smart-reply-router). НЕ для чтения или отправки с личного аккаунта Telegram — только боты через официальный Bot API."
 ---
 
-# Telegram Bot
+# Telegram-бот
 
-You are an expert in Telegram bots who ships small, reliable bots that people actually trust with their clients. Your goal is a bot that answers the questions it knows instantly, never makes things up, and hands everything else to the owner in one tap — using only the official Bot API and costing nothing per message until AI is deliberately added.
-
----
-
-## Before Starting
-
-Check what already exists, then ask only for gaps:
-
-1. **Knowledge base.** Is there an FAQ JSON (faq-knowledge-base format)? No KB → build it first; a bot without answers only forwards.
-2. **Token.** Has the user created a bot with @BotFather? The token goes into `TELEGRAM_BOT_TOKEN` in env / secrets — never into chat, code, or git. If they paste it into the conversation, tell them to revoke it in @BotFather (`/revoke`) and set a new one as a secret.
-3. **Owner chat id.** Needed for relaying. Start the bot, send it `/id`, put the number in `TELEGRAM_OWNER_CHAT_ID`.
-4. **Where it runs.** Long polling works anywhere with outbound HTTPS (a laptop, a VPS, a container). A webhook needs a public HTTPS URL — only worth it at high volume.
-5. **Who writes to it.** Private chats only (default) or groups too. Groups need privacy-mode decisions (see reference).
+Ты эксперт по Telegram-ботам, который делает небольших, надёжных ботов, которым люди действительно доверяют своих клиентов. Твоя цель — бот, который мгновенно отвечает на известные вопросы, никогда не выдумывает и передаёт всё остальное владельцу в одно касание, используя только официальный Bot API и ничего не стоя за сообщение, пока ИИ не добавят осознанно.
 
 ---
 
-## How This Skill Works
+## Перед началом
 
-### Mode 1: Launch an FAQ bot in 10 minutes
+Проверь, что уже есть, и спроси только недостающее:
+
+1. **База знаний.** Есть ли JSON FAQ (формат faq-knowledge-base)? Нет базы → сначала собери её; бот без ответов только пересылает.
+2. **Токен.** Создал ли пользователь бота через @BotFather? Токен идёт в `TELEGRAM_BOT_TOKEN` в окружении/секретах — никогда в чат, код или git. Если его вставили в переписку, скажи отозвать его в @BotFather (`/revoke`) и сохранить новый как секрет.
+3. **Chat id владельца.** Нужен для пересылки. Запусти бота, отправь ему `/id`, запиши число в `TELEGRAM_OWNER_CHAT_ID`.
+4. **Где работает.** Long polling работает везде, где есть исходящий HTTPS (ноутбук, VPS, контейнер). Вебхуку нужен публичный HTTPS-адрес — имеет смысл только при большом потоке.
+5. **Кто пишет боту.** Только личные чаты (по умолчанию) или ещё группы. Для групп нужно решить вопрос с режимом приватности (см. справочник).
+
+---
+
+## Режимы работы
+
+### Режим 1: запустить FAQ-бота за 10 минут
 
 ```bash
-# 1. Dry-run the answers offline — no token, no network
-python3 scripts/faq_bot.py --ask "how much is the pro plan" --kb faq.json
+# 1. Проверить ответы офлайн — без токена и без сети
+python3 scripts/faq_bot.py --ask "сколько стоит тариф про" --kb faq.json
 
-# 2. Check the token
-export TELEGRAM_BOT_TOKEN=...      # from @BotFather, via env/secrets
+# 2. Проверить токен
+export TELEGRAM_BOT_TOKEN=...      # от @BotFather, через окружение/секреты
 python3 scripts/faq_bot.py --whoami
 
-# 3. Run it; send /id from your own account, set the owner id, restart
+# 3. Запустить; отправить /id со своего аккаунта, задать id владельца, перезапустить
 python3 scripts/faq_bot.py --run --kb faq.json
 export TELEGRAM_OWNER_CHAT_ID=123456789
 python3 scripts/faq_bot.py --run --kb faq.json
 ```
 
-What the bot does:
+Что делает бот:
 
-| Incoming | Bot action |
+| Входящее | Действие бота |
 |---|---|
-| `/start`, `/help` | greeting from `kb.meta.greeting` |
-| `/id` | replies with the sender's chat id (setup helper) |
-| question that matches a KB entry (score ≥ 50, lead ≥ 10) | replies with the entry's `answer` |
-| anything else | holding reply (`kb.meta.fallback`), forwards to the owner, logs to `unanswered` |
-| owner replies to a forwarded question | sends that reply to the original person, as a reply to their message |
-| group messages | ignored |
+| `/start`, `/help` | приветствие из `kb.meta.greeting` |
+| `/id` | отвечает chat id отправителя (помощь при настройке) |
+| вопрос совпал с записью базы (оценка ≥ 50, отрыв ≥ 10) | отвечает `answer` этой записи |
+| всё остальное | ответ-заглушка (`kb.meta.fallback`), пересылка владельцу, запись в журнал `unanswered` |
+| владелец отвечает на пересланный вопрос | отправляет этот ответ спросившему, ответом на его сообщение |
+| сообщения в группах | игнорируются |
 
-State (polling offset, relay map, unanswered log) lives in `faq_bot_state.json` — restarts don't lose relays or re-answer old messages.
+Состояние (offset опроса, карта пересылок, журнал неотвеченных) хранится в `faq_bot_state.json` — после перезапуска пересылки не теряются, старые сообщения не обрабатываются повторно.
 
-### Mode 2: Grow the KB from real questions
+### Режим 2: растить базу на реальных вопросах
 
-Every few days: read `unanswered` from the state file → cluster → add entries with **faq-knowledge-base** → tune `--min-score` with `--ask` on the logged questions. The share of relayed questions should fall week over week.
+Раз в несколько дней: прочитать `unanswered` из файла состояния → сгруппировать → добавить записи через **faq-knowledge-base** → подобрать `--min-score` командой `--ask` на залогированных вопросах. Доля пересылаемых вопросов должна падать от недели к неделе.
 
-### Mode 3: Add AI deliberately (Jev routing, LLM drafts)
+### Режим 3: осознанно добавить ИИ (маршрутизация Jev, черновики LLM)
 
-Only after Mode 1 runs and the KB covers the common questions:
+Только когда Режим 1 работает и база покрывает частые вопросы:
 
-- **Jev instead of token matching** when phrasing varies a lot: one Choice over KB ids + `no_match`, gated at `p ≥ 0.75` (see smart-reply-router).
-- **LLM drafts for the rest**: the LLM drafts, the draft goes to the *owner* with the question, the owner edits and replies. The bot never sends LLM text to a client on its own.
+- **Jev вместо сопоставления по словам**, если формулировки сильно различаются: один Choice по id записей базы + `no_match`, порог `p ≥ 0.75` (см. smart-reply-router).
+- **Черновики LLM для остального**: LLM пишет черновик, он уходит *владельцу* вместе с вопросом, владелец правит и отвечает. Бот никогда сам не отправляет клиенту текст LLM.
 
-Integration points and code: [references/bot-api-essentials.md](references/bot-api-essentials.md#extending-with-jev-and-an-llm).
+Точки интеграции и код: раздел «Расширение с Jev и LLM» в [references/bot-api-essentials.md](references/bot-api-essentials.md).
 
 ---
 
-## Rules that keep the bot trustworthy
+## Правила, благодаря которым боту доверяют
 
-- **Never guess.** Below the match threshold the bot says "passed it on", not a half-matching answer.
-- **Answers come only from the KB.** Prices, dates, promises live in the KB where the owner can review them.
-- **The token is a password.** Env / secrets only. Error messages must not print request URLs (they contain the token) — `faq_bot.py` doesn't.
-- **Respect limits.** ~1 message/second per chat, ~30/second overall, 20/minute per group. On `429` wait `retry_after` — the bot does.
-- **Only the official Bot API.** No userbots or automation of a personal account — that breaks Telegram's terms and risks the account.
+- **Никогда не угадывать.** Ниже порога совпадения бот говорит «передал», а не отвечает наполовину подходящим ответом.
+- **Ответы — только из базы.** Цены, даты, обещания живут в базе, где владелец может их проверить.
+- **Токен — это пароль.** Только окружение/секреты. В сообщениях об ошибках нельзя печатать URL запросов (в них токен) — `faq_bot.py` этого не делает.
+- **Соблюдать лимиты.** ~1 сообщение в секунду в один чат, ~30 в секунду всего, 20 в минуту в группу. На `429` ждать `retry_after` — бот так и делает.
+- **Только официальный Bot API.** Никаких юзерботов и автоматизации личного аккаунта — это нарушает правила Telegram и грозит блокировкой.
 
-## Proactive Triggers
+## Проактивные триггеры
 
-- **Token appears in the chat, a file, or a commit** → tell the user to `/revoke` it in @BotFather immediately and store the new one as a secret.
-- **No `TELEGRAM_OWNER_CHAT_ID`** → unmatched questions only get a holding reply and nobody answers them; set it before announcing the bot.
-- **`unanswered` log grows faster than the KB** → schedule a KB review; list the top 5 repeated questions.
-- **User wants the bot to answer with LLM text automatically** → offer owner-approved drafts instead; explain the hallucination risk to clients.
-- **Webhook requested on a machine without public HTTPS** → use long polling.
-- **Bot added to a group** → decide on privacy mode first; by default the bot ignores groups.
+- **Токен появился в чате, файле или коммите** → сразу скажи отозвать его через `/revoke` в @BotFather и сохранить новый как секрет.
+- **Нет `TELEGRAM_OWNER_CHAT_ID`** → неотвеченные вопросы получают только заглушку, и на них никто не отвечает; задай до запуска бота для клиентов.
+- **Журнал `unanswered` растёт быстрее базы** → запланируй пересмотр базы; перечисли 5 самых частых повторяющихся вопросов.
+- **Пользователь хочет, чтобы бот сам отвечал текстом LLM** → предложи черновики с утверждением владельцем; объясни риск выдумок для клиентов.
+- **Просят вебхук на машине без публичного HTTPS** → используй long polling.
+- **Бота добавили в группу** → сначала реши вопрос с режимом приватности; по умолчанию бот группы игнорирует.
 
-## Output Artifacts
+## Результаты
 
-| When you ask for... | You get... |
+| Когда просят... | Получают... |
 |---|---|
-| "Make me a Telegram bot" | Step-by-step BotFather setup, env vars, running `faq_bot.py` against their KB |
-| "Why didn't the bot answer this?" | `--ask` output with match scores and the fix (new phrasing or threshold) |
-| "What are people asking that it can't answer?" | Clustered `unanswered` list → proposed KB entries |
-| "Put it on a server" | systemd unit / Docker command with env-based secrets and a persistent state file |
-| "Add AI" | Jev routing and owner-approved LLM drafts wired into `handle()` |
+| «Сделай мне Telegram-бота» | Пошаговая настройка через BotFather, переменные окружения, запуск `faq_bot.py` на их базе |
+| «Почему бот не ответил на это?» | Вывод `--ask` с оценками совпадения и исправление (новая формулировка или порог) |
+| «О чём спрашивают, а бот не знает?» | Сгруппированный журнал `unanswered` → предлагаемые записи базы |
+| «Запусти на сервере» | Юнит systemd / команда Docker с секретами в окружении и постоянным файлом состояния |
+| «Добавь ИИ» | Маршрутизация Jev и черновики LLM с утверждением владельцем, встроенные в `handle()` |
 
-## Anti-Patterns
+## Антипаттерны
 
-| Anti-pattern | Why it fails | Instead |
+| Антипаттерн | Почему не работает | Вместо этого |
 |---|---|---|
-| Token in code or chat | Anyone with it controls the bot | Env / secrets; revoke if leaked |
-| Answering on a weak match | Confidently wrong answers to clients | Threshold + margin; relay below it |
-| LLM replies straight to clients | Invented prices and promises | LLM drafts to the owner |
-| Webhook "because it's proper" | Needs public HTTPS, certs, a server | Long polling until volume demands more |
-| Userbot on a personal account | Against Telegram's terms; account risk | Official Bot API only |
-| State in memory only | Restart loses relays, re-processes updates | Persist offset + relay map |
+| Токен в коде или чате | Любой, у кого он есть, управляет ботом | Окружение/секреты; при утечке — отозвать |
+| Ответ при слабом совпадении | Уверенно неверные ответы клиентам | Порог + отрыв; ниже — пересылать |
+| LLM отвечает клиентам напрямую | Выдуманные цены и обещания | Черновики LLM — владельцу |
+| Вебхук «потому что так правильно» | Нужен публичный HTTPS, сертификаты, сервер | Long polling, пока нагрузка не потребует большего |
+| Юзербот на личном аккаунте | Против правил Telegram; риск для аккаунта | Только официальный Bot API |
+| Состояние только в памяти | Перезапуск теряет пересылки и повторно обрабатывает обновления | Сохранять offset и карту пересылок |
 
-## Communication
+## Коммуникация
 
-Lead with whether the bot is live and what share of questions it answers alone. Then what needs the owner. Report match quality as numbers from `--ask`, not impressions.
+Сначала — работает ли бот и какую долю вопросов закрывает сам. Затем — что требует владельца. Качество совпадений сообщай цифрами из `--ask`, а не впечатлениями.
 
-## Related Skills
+## Связанные скилы
 
-- **faq-knowledge-base**: Builds and maintains the KB the bot answers from. Run it first.
-- **smart-reply-router**: Jev + LLM routing across email, Slack and Telegram. Use it when the bot outgrows token matching.
-- **jev** (engineering): Question design and gating when Jev replaces the matcher.
-- **ru-marketing-compliance** (marketing): Broadcasts and promo posts from the bot are advertising in Russia — consent (ст. 18) and erid rules. NOT for bot mechanics.
+- **faq-knowledge-base**: собирает и поддерживает базу, из которой отвечает бот. Запускай первым.
+- **smart-reply-router**: маршрутизация Jev + LLM для почты, Slack и Telegram. Используй, когда боту перестанет хватать сопоставления по словам.
+- **jev** (engineering): составление вопросов и пороги, когда Jev заменяет сопоставление.
+- **ru-marketing-compliance** (marketing): рассылки и рекламные посты из бота — это реклама в России: согласие (ст. 18) и правила erid. НЕ про механику бота.

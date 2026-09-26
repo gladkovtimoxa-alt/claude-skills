@@ -1,6 +1,6 @@
 {
   "name": "smart-reply-router",
-  "description": "Answer incoming email and messenger messages while calling the LLM only for replies that need new text: Jev triages each message in one batch (intent, FAQ match, urgency, spam, needs-human), code routes to ignore / human / FAQ template / LLM draft. Drafts by default; auto-send only for whitelisted FAQ templates on explicit opt-in; red-line topics always go to the human.",
+  "description": "Ответы на входящие письма и сообщения мессенджеров, при которых LLM вызывается только там, где нужен новый текст: Jev сортирует каждое сообщение одним пакетом (намерение, запись FAQ, срочность, спам, нужен ли человек), код направляет в игнор / человеку / шаблон FAQ / черновик LLM. По умолчанию черновики; автоотправка только разрешённых шаблонов FAQ по явному согласию; красные линии всегда у человека.",
   "version": "2.12.0",
   "author": {
     "name": "gladkovtimoxa-alt",

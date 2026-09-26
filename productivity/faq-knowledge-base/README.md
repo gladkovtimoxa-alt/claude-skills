@@ -1,19 +1,19 @@
-# faq-knowledge-base — The Answers Behind the Bot
+# faq-knowledge-base — ответы, на которых стоит бот
 
-> A bot is only as good as its answers. Mine real questions, write short answers with review dates, and measure how much of real traffic the KB actually covers.
+> Бот хорош ровно настолько, насколько хороши ответы за ним. Извлекайте реальные вопросы, пишите короткие ответы с датами пересмотра и измеряйте, какую часть реального потока база действительно закрывает.
 
-## The discipline
+## Правила
 
-| Rule | Enforced by |
+| Правило | Чем обеспечено |
 |---|---|
-| Entries come from real questions, clustered biggest-first | `faq_kb_coverage.py` |
-| Every entry has an id, a question and a non-empty answer; ids are unique | `faq_kb_linter.py` — exit 2 |
-| At least 3 phrasings in customers' own words | `faq_kb_linter.py` — warning |
-| Facts carry `review_by`; passed dates are flagged | `faq_kb_linter.py` — warning |
-| Confusable entries get merged or sharpened | `faq_kb_linter.py` — similarity ≥ 0.6 |
-| Coverage is measured with the same matcher the bot uses | `faq_kb_coverage.py` |
+| Записи — из реальных вопросов, крупнейшие группы первыми | `faq_kb_coverage.py` |
+| У каждой записи есть id, вопрос и непустой ответ; id уникальны | `faq_kb_linter.py` — код выхода 2 |
+| Не меньше 3 формулировок словами клиентов | `faq_kb_linter.py` — предупреждение |
+| У фактов есть `review_by`; прошедшие даты отмечаются | `faq_kb_linter.py` — предупреждение |
+| Путаемые записи объединяются или разводятся | `faq_kb_linter.py` — сходство ≥ 0.6 |
+| Покрытие меряется тем же сопоставлением, что у бота | `faq_kb_coverage.py` |
 
-## Quick start
+## Быстрый старт
 
 ```bash
 cp skills/faq-knowledge-base/assets/faq-template.json faq.json
@@ -21,16 +21,16 @@ python skills/faq-knowledge-base/scripts/faq_kb_linter.py faq.json
 python skills/faq-knowledge-base/scripts/faq_kb_coverage.py faq.json questions.txt
 ```
 
-Or say **"build an FAQ for my bot from these messages"** or **"what are customers asking that the bot can't answer?"**.
+Или скажите **«собери FAQ для моего бота из этих сообщений»** или **«о чём спрашивают клиенты, а бот не знает?»**.
 
-## What's in the box
+## Что внутри
 
-| Path | Purpose |
+| Путь | Назначение |
 |---|---|
-| `skills/faq-knowledge-base/SKILL.md` | Build, improve and weekly-upkeep modes |
-| `skills/faq-knowledge-base/references/kb-format.md` | Field rules, answer-writing guide, matching, Jev mapping |
-| `skills/faq-knowledge-base/assets/faq-template.json` | Starter KB |
-| `skills/faq-knowledge-base/scripts/faq_kb_linter.py` | Health score 0-100. No network |
-| `skills/faq-knowledge-base/scripts/faq_kb_coverage.py` | Coverage % and new-entry candidates. No network |
+| `skills/faq-knowledge-base/SKILL.md` | Режимы: сбор, улучшение, еженедельное обслуживание |
+| `skills/faq-knowledge-base/references/kb-format.md` | Правила полей, как писать ответы, сопоставление, связь с Jev |
+| `skills/faq-knowledge-base/assets/faq-template.json` | Стартовая база |
+| `skills/faq-knowledge-base/scripts/faq_kb_linter.py` | Оценка состояния 0-100. Без сети |
+| `skills/faq-knowledge-base/scripts/faq_kb_coverage.py` | Покрытие в % и кандидаты в новые записи. Без сети |
 
-Used by the `telegram-bot` and `smart-reply-router` plugins.
+Используется плагинами `telegram-bot` и `smart-reply-router`.

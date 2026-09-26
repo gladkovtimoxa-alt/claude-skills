@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FAQ KB linter — validate a question/answer knowledge base before bots and routers answer from it.
+"""Линтер базы FAQ — проверка базы вопросов и ответов до того, как из неё начнут отвечать боты и маршрутизаторы.
 
 Checks the JSON format shared by telegram-bot and smart-reply-router: unique
 ids, a question and an answer per entry, enough real phrasings, answers that
@@ -58,52 +58,52 @@ def add(findings, severity, entry, message, penalty):
 def lint(kb, today):
     findings = []
     if not isinstance(kb, dict) or not isinstance(kb.get("entries"), list):
-        add(findings, "error", None, "KB must be an object with an `entries` list", 100)
+        add(findings, "error", None, "база должна быть объектом со списком `entries`", 100)
         return findings, 0
     entries = kb["entries"]
     if not entries:
-        add(findings, "error", None, "KB has no entries", 100)
+        add(findings, "error", None, "в базе нет записей", 100)
         return findings, 0
 
     seen = {}
     for i, e in enumerate(entries):
         if not isinstance(e, dict):
-            add(findings, "error", f"#{i}", "entry must be an object", 15)
+            add(findings, "error", f"#{i}", "запись должна быть объектом", 15)
             continue
         eid = e.get("id")
         label = eid or f"#{i}"
         if not eid:
-            add(findings, "error", label, "missing `id`", 15)
+            add(findings, "error", label, "нет `id`", 15)
         elif not ID_RE.match(str(eid)):
-            add(findings, "warning", label, "id should be lowercase letters, digits, _ or - (it becomes a Jev option key)", 3)
+            add(findings, "warning", label, "id должен состоять из строчных букв, цифр, _ или - (он становится ключом варианта Jev)", 3)
         if eid in seen:
-            add(findings, "error", label, f"duplicate id (also entry #{seen[eid]})", 15)
+            add(findings, "error", label, f"повтор id (также запись #{seen[eid]})", 15)
         elif eid:
             seen[eid] = i
         if not str(e.get("question", "")).strip():
-            add(findings, "error", label, "missing `question`", 10)
+            add(findings, "error", label, "нет `question`", 10)
         answer = str(e.get("answer", "")).strip()
         if not answer:
-            add(findings, "error", label, "empty `answer` — a bot would send nothing", 15)
+            add(findings, "error", label, "пустой `answer` — бот ничего не отправит", 15)
         elif len(answer) > MAX_ANSWER:
-            add(findings, "warning", label, f"answer is {len(answer)} chars; Telegram splits above {MAX_ANSWER}", 5)
+            add(findings, "warning", label, f"ответ {len(answer)} символов; Telegram делит сообщения длиннее {MAX_ANSWER}", 5)
         elif len(answer) > LONG_ANSWER:
-            add(findings, "info", label, f"answer is {len(answer)} chars; people read the first two lines", 1)
+            add(findings, "info", label, f"ответ {len(answer)} символов; люди читают первые две строки", 1)
         phrasings = e.get("phrasings") or []
         if not isinstance(phrasings, list):
-            add(findings, "error", label, "`phrasings` must be a list of strings", 10)
+            add(findings, "error", label, "`phrasings` должен быть списком строк", 10)
             phrasings = []
         if len(phrasings) < MIN_PHRASINGS:
-            add(findings, "warning", label, f"{len(phrasings)} phrasings; add at least {MIN_PHRASINGS} in customers' own words", 4)
+            add(findings, "warning", label, f"формулировок: {len(phrasings)}; добавьте хотя бы {MIN_PHRASINGS} словами клиентов", 4)
         review_by = e.get("review_by")
         if review_by:
             try:
                 if datetime.date.fromisoformat(str(review_by)) < today:
-                    add(findings, "warning", label, f"review_by {review_by} has passed — facts may be stale", 6)
+                    add(findings, "warning", label, f"review_by {review_by} прошёл — факты могли устареть", 6)
             except ValueError:
-                add(findings, "warning", label, f"review_by {review_by!r} is not YYYY-MM-DD", 2)
+                add(findings, "warning", label, f"review_by {review_by!r} не в формате YYYY-MM-DD", 2)
         else:
-            add(findings, "info", label, "no `review_by`; prices, dates and policies go stale silently", 1)
+            add(findings, "info", label, "нет `review_by`; цены, даты и правила устаревают незаметно", 1)
 
     valid = [e for e in entries if isinstance(e, dict) and e.get("id")]
     sets = {id(e): [tokens(v) for v in [e.get("question", "")] + list(e.get("phrasings") or []) if tokens(v)] for e in valid}
@@ -115,18 +115,18 @@ def lint(kb, today):
             best = max((dice(x, y) for x in sets[id(a)] for y in sets[id(b)]), default=0.0)
             if best >= CONFUSABLE:
                 add(findings, "warning", a["id"],
-                    f"confusable with '{b['id']}' (similarity {best:.2f}); merge them or sharpen the phrasings", 6)
+                    f"легко спутать с '{b['id']}' (сходство {best:.2f}); объедините или сделайте формулировки чётче", 6)
 
     score = max(0, 100 - sum(f["penalty"] for f in findings))
     return findings, score
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Lint an FAQ knowledge-base JSON (telegram-bot / smart-reply-router format). No network.")
-    parser.add_argument("kb", nargs="?", help="KB JSON file ('-' for stdin)")
-    parser.add_argument("--sample", action="store_true", help="lint an embedded, deliberately flawed sample KB")
-    parser.add_argument("--today", help="date for review checks, YYYY-MM-DD (default: today)")
-    parser.add_argument("--json", action="store_true", help="output as JSON")
+    parser = argparse.ArgumentParser(description="Проверка JSON-базы FAQ (формат telegram-bot / smart-reply-router). Без сети.")
+    parser.add_argument("kb", nargs="?", help="JSON-файл базы ('-' — stdin)")
+    parser.add_argument("--sample", action="store_true", help="проверить встроенный пример базы с намеренными ошибками")
+    parser.add_argument("--today", help="дата для проверки review_by, YYYY-MM-DD (по умолчанию сегодня)")
+    parser.add_argument("--json", action="store_true", help="вывод в JSON")
     args = parser.parse_args()
 
     try:
@@ -136,9 +136,9 @@ def main():
         elif args.kb:
             kb = json.load(sys.stdin if args.kb == "-" else open(args.kb, encoding="utf-8"))
         else:
-            parser.error("give a KB file or --sample")
+            parser.error("укажите файл базы или --sample")
     except (OSError, json.JSONDecodeError, ValueError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        print(f"ошибка: {exc}", file=sys.stderr)
         sys.exit(2)
 
     findings, score = lint(kb, today)
@@ -151,7 +151,7 @@ def main():
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
-        print(f"FAQ KB: {verdict}  score {score}/100  ({entries} entries, {errors} errors, {warnings} warnings)")
+        print(f"База FAQ: {verdict}  оценка {score}/100  (записей: {entries}, ошибок: {errors}, предупреждений: {warnings})")
         for f in findings:
             where = f"[{f['entry']}] " if f["entry"] else ""
             print(f"  {f['severity'].upper():7} {where}{f['message']}")

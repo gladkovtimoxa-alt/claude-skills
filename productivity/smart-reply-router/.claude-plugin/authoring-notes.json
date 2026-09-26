@@ -1,0 +1,6 @@
+{
+  "source": {
+    "build_pattern": "Path-B method skill — Jev-first triage in front of LLM drafting, with a deterministic route planner and draft-by-default safety",
+    "distinct_from": "productivity/email inbox-triage (LLM-driven personal inbox triage with sender research and reports; smart-reply-router is channel-agnostic, cost-first routing for repetitive incoming questions)"
+  }
+}

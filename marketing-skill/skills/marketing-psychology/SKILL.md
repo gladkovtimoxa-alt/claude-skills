@@ -121,3 +121,4 @@ All output passes quality verification:
 - **pricing-strategy**: For pricing decisions. Psychology provides the buyer behavior lens.
 - **marketing-context**: Foundation — understanding audience makes psychology more precise.
 - **ab-test-setup**: For testing which psychological approach works. Data beats theory.
+- **desire-map**: For deciding WHAT to promise a segment (core desire, honest offer). Psychology then decides HOW to say it.

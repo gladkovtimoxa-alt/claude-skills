@@ -115,6 +115,7 @@ Key email tools:
 - **launch-strategy** — WHEN coordinating email sequences around a specific product launch, announcement, or release window. NOT for evergreen nurture or onboarding sequences.
 - **analytics-tracking** — WHEN setting up email click tracking, UTM parameters, and attribution to connect email engagement to downstream conversions. NOT for writing or designing the sequence.
 - **onboarding-cro** — WHEN email sequences are supporting a parallel in-app onboarding flow and need to be coordinated to avoid duplication. NOT as a replacement for in-app onboarding experience.
+- **ru-marketing-compliance** — WHEN sending to Russian recipients: separate consents for personal data and for advertising (ст. 18 ФЗ-38, 152-ФЗ). NOT for sequence design.
 
 ---
 

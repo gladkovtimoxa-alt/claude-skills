@@ -113,3 +113,4 @@ Bottom line first (e.g. "68 of 100 messages answered without the LLM, 5 need you
 - **telegram-bot**: The Telegram side — bot token, polling/webhook, sending. NOT for email.
 - **inbox-triage**: Full personal inbox triage with sender research and reports. Use it for your own inbox; use this skill for high-volume, repetitive incoming questions.
 - **llm-cost-optimizer** (engineering): Caching and model choice for the `llm_draft` branch.
+- **desire-map** (marketing): Its `--jev` output adds a `desire_cluster` question to the triage batch, so LLM drafts for leads open with the angle the sender actually cares about. NOT a router.

@@ -265,3 +265,5 @@ Notes: Benefit-first formula, tested format for consideration stage
 - **ab-test-setup**: Use when planning which ad variants to test and how to measure significance. NOT for generating the variants (use ad-creative for that).
 - **content-creator**: Use for organic social content and blog content. NOT for paid ad copy (different constraints, different voice).
 - **copy-editing**: Use when polishing existing copy. NOT for bulk generation or platform-specific formatting.
+- **desire-map**: Use to pick one value cluster per ad set before generating variants. NOT for the variants themselves.
+- **ru-marketing-compliance**: Use before launching ads in Russia — claim check and erid marking. NOT for creative direction.

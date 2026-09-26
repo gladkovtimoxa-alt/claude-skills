@@ -327,6 +327,7 @@ For tracking and attribution, pair these with GA4 and Segment.
 - **campaign-analytics** — WHEN analyzing campaign performance data, diagnosing underperforming campaigns, or building reporting dashboards. NOT for initial campaign setup or creative production.
 - **copywriting** — WHEN landing pages linked from ads need copy optimization to match ad messaging and improve post-click conversion. NOT for the ad copy itself.
 - **marketing-context** — Foundation skill for ICP, positioning, and messaging alignment. ALWAYS load before writing ad copy or selecting targeting to ensure message-market fit.
+- **ru-marketing-compliance** — WHEN launching in Russia: Яндекс Директ, VK Ads, Telegram Ads/посевы, erid marking and ФЗ-38 claim rules. NOT for Google/Meta platform mechanics.
 
 ---
 

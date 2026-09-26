@@ -1,6 +1,6 @@
 ---
 name: "marketing-skills"
-description: "Directory and router for the marketing skills library. Use when you need to find the right marketing skill for a task, see what marketing capabilities exist, or get oriented in this plugin. 44 specialist skills across 8 pods (content, SEO + AEO, CRO, channels, growth, intelligence, sales enablement, ops), 59 stdlib Python tools. Routes to one skill — it does not execute marketing work itself."
+description: "Directory and router for the marketing skills library. Use when you need to find the right marketing skill for a task, see what marketing capabilities exist, or get oriented in this plugin. 48 specialist skills across 8 pods (content, SEO + AEO, CRO, channels, growth, intelligence, sales enablement, ops), 64 stdlib Python tools. Routes to one skill — it does not execute marketing work itself."
 version: 2.10.3
 author: Alireza Rezvani
 license: MIT
@@ -18,7 +18,7 @@ agents:
 
 This is the index skill for the marketing plugin. It does one job: route you to the right specialist skill, then get out of the way. For request-by-request routing logic, [../marketing-ops/SKILL.md](../marketing-ops/SKILL.md) is the canonical router — this file is the map.
 
-**Counts (kept honest):** 44 specialist skills in `skills/` (plus this index and the deprecated `content-creator` redirect), 1 video skill in `video-content-strategist/`, 59 stdlib-only Python tools. No pip installs needed.
+**Counts (kept honest):** 48 specialist skills in `skills/` (plus this index and the deprecated `content-creator` redirect), 1 video skill in `video-content-strategist/`, 64 stdlib-only Python tools. No pip installs needed.
 
 ## Start Here
 
@@ -37,6 +37,7 @@ All paths are relative to `marketing-skill/`.
 | Route a request, plan campaigns, pick channels | `skills/marketing-ops/` |
 | Demand gen programs, funnel + CRM ops | `skills/marketing-demand-acquisition/` |
 | Positioning, ICP, product marketing strategy | `skills/marketing-strategy-pmm/` |
+| What to sell to whom: segment → core desire → honest offer | `skills/desire-map/` |
 | Brand voice/visual consistency audits | `skills/brand-guidelines/` |
 
 ### Content
@@ -84,6 +85,7 @@ All paths are relative to `marketing-skill/`.
 | Video content strategy | `video-content-strategist/` (sibling folder, own plugin) |
 | Webinars (funnel math) | `skills/webinar-marketing/` |
 | App Store / Play Store (ASO) | `skills/app-store-optimization/` |
+| Russian market: ad law (ФЗ-38), erid marking, Telegram / Яндекс / VK channel choice | `skills/ru-marketing-compliance/` |
 
 ### Growth
 | Task | Skill |
@@ -111,7 +113,7 @@ Each skill documents its own tools in its SKILL.md (a "Tools" or workflow sectio
 python3 skills/<skill>/scripts/<tool>.py --help
 ```
 
-All 59 scripts are stdlib-only; most run a demo with no args.
+All 64 scripts are stdlib-only; most run a demo with no args.
 
 ## Rules
 

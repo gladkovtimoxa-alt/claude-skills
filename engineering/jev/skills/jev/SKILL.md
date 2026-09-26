@@ -146,3 +146,4 @@ Bottom line first (how many LLM calls go away and what it saves), then the per-c
 - **smart-reply-router** (productivity): Uses Jev to triage email/messages and calls an LLM only to draft the replies that need one. NOT a general Jev reference.
 - **faq-knowledge-base** (productivity): Builds the Q&A base that Jev Choice can match incoming questions against. NOT for the API itself.
 - **telegram-bot** (productivity): A Telegram bot that answers questions; plugs Jev in as the router. NOT for other messengers.
+- **desire-map** (marketing): `desire_map_planner.py --jev` emits a ready Choice request that sorts customer messages into 7 value clusters. NOT for the API itself.

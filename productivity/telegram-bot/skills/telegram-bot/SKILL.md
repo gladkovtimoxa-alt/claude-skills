@@ -114,3 +114,4 @@ Lead with whether the bot is live and what share of questions it answers alone. 
 - **faq-knowledge-base**: Builds and maintains the KB the bot answers from. Run it first.
 - **smart-reply-router**: Jev + LLM routing across email, Slack and Telegram. Use it when the bot outgrows token matching.
 - **jev** (engineering): Question design and gating when Jev replaces the matcher.
+- **ru-marketing-compliance** (marketing): Broadcasts and promo posts from the bot are advertising in Russia — consent (ст. 18) and erid rules. NOT for bot mechanics.

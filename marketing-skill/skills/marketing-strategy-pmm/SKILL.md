@@ -396,3 +396,4 @@ All output passes quality verification:
 - **launch-strategy**: For executing product launches planned by PMM.
 - **competitive-intel** (C-Suite): For strategic competitive intelligence.
 - **cmo-advisor** (C-Suite): For marketing budget and growth model decisions.
+- **desire-map**: For a fast segment → core desire → honest offer pass before full positioning work. NOT a substitute for ICP and messaging hierarchy.

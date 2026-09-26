@@ -1,29 +1,29 @@
-# Russian acquisition channels — what each is good for and its compliance catch
+# Каналы привлечения в России — для чего каждый и какие у него юридические особенности
 
-The rest of the marketing branch is written for Google, Meta, LinkedIn and X. In Russia the working mix is different. Numbers here are orders of magnitude to plan tests with, not benchmarks 🔴 — measure your own.
+Остальная ветка маркетинга написана для Google, Meta, LinkedIn и X. В России рабочий набор другой. Цифры здесь — порядки величин для планирования тестов, а не бенчмарки 🔴 — меряйте свои.
 
-| Channel | Best for | How to test cheaply | Compliance catch |
+| Канал | Лучше всего для | Как дёшево протестировать | Юридическая особенность |
 |---|---|---|---|
-| **Telegram посевы** (paid posts in niche channels) | Niche B2C and B2B audiences, infoproducts, apps, services | 3-5 channels with 5-30k subscribers in the exact niche; compare cost per lead, not per view | erid for each post via an ОРД; check the channel isn't an иноагент; admins often don't mark — you're still responsible |
-| **Telegram Ads** (official) | Scale after посевы prove the angle | Target by channel topics/channels; short text, one CTA to a bot | Marking through the platform's flow; strict text limits |
-| **Your own Telegram channel + bot** | Retention, warm leads, FAQ answering | Bot as the landing page (see **telegram-bot**) | Messages to users who didn't opt in = ст. 18; keep consent logs |
-| **Яндекс Директ** (search + РСЯ) | Hot demand: people already searching | Search campaigns on exact problem queries (Wordstat for volumes) | Marking handled by the platform's ОРД — keep creatives consistent; category disclaimers still on you |
-| **VK Ads / VK groups** | Mass B2C, regions, 25+ audience | Lead forms, retargeting on your site visitors | Platform ОРД; same category rules |
-| **Яндекс Дзен / VK Видео / Rutube** | Content-led trust, SEO-like long tail | Repurpose one expert piece into 3-5 formats | Paid integrations with authors need erid |
-| **Маркетплейсы** (Ozon, Wildberries, Яндекс Маркет) | Physical goods | Cards SEO + internal ads + reviews | Product claims in cards are advertising too; no cure/superiority claims |
-| **Авито** | Local services, used goods, B2B services in regions | Several listings with different angles (desire clusters) | Honest pricing; no bait-and-switch |
-| **Яндекс Карты / 2ГИС** | Local businesses | Complete profile, photos, answer every review | Fake reviews are unfair competition and platform bans |
-| **Email / SMS to own base** | Repeat sales | Segment by desire cluster, not only by purchase history | Separate advertising consent (ст. 18) and personal-data consent |
+| **Посевы в Telegram** (платные посты в нишевых каналах) | Нишевые B2C и B2B аудитории, инфопродукты, приложения, услуги | 3-5 каналов на 5-30 тыс. подписчиков именно в нише; сравнивать стоимость заявки, а не просмотра | erid на каждый пост через ОРД; проверить, что канал не иноагент; админы часто не маркируют — отвечаете всё равно вы |
+| **Telegram Ads** (официальная) | Масштабирование, когда посевы подтвердили угол | Таргетинг по тематикам/каналам; короткий текст, один призыв, ведущий в бота | Маркировка через механизм площадки; жёсткие лимиты на текст |
+| **Свой Telegram-канал + бот** | Удержание, тёплые заявки, ответы на вопросы | Бот как посадочная страница (см. **telegram-bot**) | Сообщения тем, кто не подписывался = ст. 18; храните журнал согласий |
+| **Яндекс Директ** (поиск + РСЯ) | Горячий спрос: люди уже ищут | Поисковые кампании по точным запросам-проблемам (частотность — в Wordstat) | Маркировку делает ОРД площадки — следите за единообразием креативов; предупреждения по категориям всё равно на вас |
+| **VK Ads / группы VK** | Массовый B2C, регионы, аудитория 25+ | Лид-формы, ретаргетинг на посетителей сайта | ОРД площадки; те же правила по категориям |
+| **Яндекс Дзен / VK Видео / Rutube** | Доверие через контент, «длинный хвост» как в SEO | Один экспертный материал — в 3-5 форматов | Платные интеграции с авторами требуют erid |
+| **Маркетплейсы** (Ozon, Wildberries, Яндекс Маркет) | Физические товары | SEO карточек + внутренняя реклама + отзывы | Заявления в карточках — тоже реклама; без обещаний излечения и превосходства |
+| **Авито** | Локальные услуги, б/у товары, B2B-услуги в регионах | Несколько объявлений с разными углами (кластеры желаний) | Честные цены; без «приманки и подмены» |
+| **Яндекс Карты / 2ГИС** | Локальный бизнес | Заполненная карточка, фото, ответ на каждый отзыв | Фальшивые отзывы — недобросовестная конкуренция и блокировка на площадке |
+| **Почта / SMS по своей базе** | Повторные продажи | Сегментировать по кластеру желаний, а не только по истории покупок | Отдельное согласие на рекламу (ст. 18) и согласие на обработку ПДн |
 
-## Choosing the first channel
+## Как выбрать первый канал
 
-1. People already search for the solution → **Яндекс Директ search**.
-2. They don't search but gather in communities → **Telegram посевы** in those communities.
-3. Local service → **Яндекс Карты / 2ГИС + Авито**.
-4. Physical product → **marketplace** first, own channels second.
+1. Люди уже ищут решение → **поиск Яндекс Директа**.
+2. Не ищут, но собираются в сообществах → **посевы в Telegram** в этих сообществах.
+3. Локальная услуга → **Яндекс Карты / 2ГИС + Авито**.
+4. Физический товар → сначала **маркетплейс**, свои каналы потом.
 
-## Where the rest of the branch applies
+## Где пригодится остальная ветка
 
-- ad-creative, copywriting, ab-test-setup — universal, use as is.
-- paid-ads — platform mechanics are for Google/Meta/LinkedIn; the strategy parts (budgets, testing, attribution) transfer; use this table for platform choice.
-- social-content / x-twitter-growth / linkedin-* — replace platforms with Telegram, VK, Дзен.
+- ad-creative, copywriting, ab-test-setup — универсальны, используйте как есть.
+- paid-ads — механика площадок там для Google/Meta/LinkedIn; стратегическая часть (бюджеты, тесты, атрибуция) переносится; площадки выбирайте по этой таблице.
+- social-content / x-twitter-growth / linkedin-* — замените платформы на Telegram, VK, Дзен.

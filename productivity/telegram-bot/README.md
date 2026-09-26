@@ -1,32 +1,32 @@
-# telegram-bot — Answers What It Knows, Hands You the Rest
+# telegram-bot — отвечает на то, что знает, остальное передаёт вам
 
-> A Telegram bot on the official Bot API. Known questions: instant answer from your knowledge base, zero AI tokens. Unknown: forwarded to you — reply to it and the bot delivers your answer.
+> Telegram-бот на официальном Bot API. Известные вопросы — мгновенный ответ из вашей базы знаний, 0 токенов ИИ. Неизвестные — пересылаются вам; ответьте на пересланное сообщение, и бот доставит ваш ответ.
 
-## The discipline
+## Правила
 
-| Rule | Enforced by |
+| Правило | Чем обеспечено |
 |---|---|
-| Token and owner id only from env (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_OWNER_CHAT_ID`) | `faq_bot.py` |
-| Answer only above a match score and a lead over the runner-up; otherwise relay | `faq_bot.py` — `--min-score`, `--min-margin` |
-| Owner replies reach the original person as a reply to their message | `faq_bot.py` relay map |
-| Offset, relay map and unanswered log survive restarts | `faq_bot.py` state file |
-| Honour `retry_after` on 429; split messages over 4096 chars | `faq_bot.py` |
-| LLM text never goes to a client without the owner | `SKILL.md`, `references/bot-api-essentials.md` |
+| Токен и id владельца — только из окружения (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_OWNER_CHAT_ID`) | `faq_bot.py` |
+| Отвечать только выше порога совпадения и с отрывом от второй записи; иначе пересылать | `faq_bot.py` — `--min-score`, `--min-margin` |
+| Ответ владельца доходит до спросившего ответом на его сообщение | карта пересылок в `faq_bot.py` |
+| Offset, карта пересылок и журнал неотвеченных переживают перезапуск | файл состояния `faq_bot.py` |
+| Соблюдать `retry_after` на 429; делить сообщения длиннее 4096 символов | `faq_bot.py` |
+| Текст LLM никогда не уходит клиенту без владельца | `SKILL.md`, `references/bot-api-essentials.md` |
 
-## Quick start
+## Быстрый старт
 
 ```bash
-python skills/telegram-bot/scripts/faq_bot.py --sample                  # offline demo
+python skills/telegram-bot/scripts/faq_bot.py --sample                  # офлайн-демо
 python skills/telegram-bot/scripts/faq_bot.py --ask "сколько стоит" --kb faq.json
 TELEGRAM_BOT_TOKEN=... python skills/telegram-bot/scripts/faq_bot.py --run --kb faq.json
 ```
 
-## What's in the box
+## Что внутри
 
-| Path | Purpose |
+| Путь | Назначение |
 |---|---|
-| `skills/telegram-bot/SKILL.md` | Launch, grow-the-KB, and add-AI modes; trust rules |
-| `skills/telegram-bot/references/bot-api-essentials.md` | BotFather, methods, limits, formatting, groups, webhook, systemd/Docker, Jev/LLM extension |
-| `skills/telegram-bot/scripts/faq_bot.py` | The bot: long polling, KB answers, owner relay. Offline `--ask` / `--sample` modes |
+| `skills/telegram-bot/SKILL.md` | Режимы: запуск, рост базы, добавление ИИ; правила доверия |
+| `skills/telegram-bot/references/bot-api-essentials.md` | BotFather, методы, лимиты, форматирование, группы, вебхук, systemd/Docker, расширение с Jev/LLM |
+| `skills/telegram-bot/scripts/faq_bot.py` | Бот: long polling, ответы из базы, пересылка владельцу. Офлайн-режимы `--ask` / `--sample` |
 
-The KB format comes from the `faq-knowledge-base` plugin.
+Формат базы знаний — из плагина `faq-knowledge-base`.

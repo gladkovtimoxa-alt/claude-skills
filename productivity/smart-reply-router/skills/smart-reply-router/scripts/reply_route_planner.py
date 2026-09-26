@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reply route planner — route triaged messages to ignore / human / faq_template / llm_draft.
+"""Планировщик маршрутов ответов — направляет отсортированные сообщения в ignore / human / faq_template / llm_draft.
 
 Input is a list of messages, each carrying the `answers` object that Jev
 returned for the triage batch (intent, faq_match, urgency, is_spam,
@@ -108,15 +108,15 @@ def route_message(msg, policy):
             "intent_p": round(intent_p, 3), "faq": None, "send": False}
 
     if spam is not None and spam >= t["spam"]:
-        return {**base, "route": "ignore", "reason": f"is_spam={spam:.2f}"}
+        return {**base, "route": "ignore", "reason": f"спам, is_spam={spam:.2f}"}
     red_hits = sorted(k for k, p in intent_probs.items() if k.lower() in red and p >= RED_LINE_SECONDARY_P)
     if (intent and intent.lower() in red) or red_hits:
         hit = intent if intent and intent.lower() in red else red_hits[0]
-        return {**base, "route": "human", "reason": f"red-line intent '{hit}' (p={intent_probs.get(hit, 0):.2f})"}
+        return {**base, "route": "human", "reason": f"красная линия '{hit}' (p={intent_probs.get(hit, 0):.2f})"}
     if needs_human is not None and needs_human >= t["needs_human"]:
-        return {**base, "route": "human", "reason": f"needs_human={needs_human:.2f}"}
+        return {**base, "route": "human", "reason": f"нужен человек, needs_human={needs_human:.2f}"}
     if isinstance(urgency_score, (int, float)) and urgency_score >= t["critical_urgency"]:
-        return {**base, "route": "human", "reason": f"urgency={urgency_score}"}
+        return {**base, "route": "human", "reason": f"критическая срочность, urgency={urgency_score}"}
 
     presence = 1.0 - no_match_p(faq_probs) if faq_probs else 0.0
     faq_ok = (faq is not None and faq.lower() not in NO_MATCH_KEYS
@@ -124,15 +124,15 @@ def route_message(msg, policy):
     if faq_ok:
         send = (policy["mode"] == "auto" and intent is not None and intent.lower() in whitelist
                 and intent_p >= t["intent_min_p"])
-        why = "auto-send: whitelisted intent" if send else "draft: " + (
-            "mode is draft" if policy["mode"] != "auto" else
-            "intent not whitelisted" if not intent or intent.lower() not in whitelist else
-            f"intent p={intent_p:.2f} < {t['intent_min_p']}")
+        why = "автоотправка: намерение разрешено" if send else "черновик: " + (
+            "режим draft" if policy["mode"] != "auto" else
+            "намерение не в списке разрешённых" if not intent or intent.lower() not in whitelist else
+            f"p намерения={intent_p:.2f} < {t['intent_min_p']}")
         return {**base, "route": "faq_template", "faq": faq, "send": send,
-                "reason": f"faq '{faq}' p={faq_p:.2f}, presence={presence:.2f}; {why}"}
+                "reason": f"FAQ '{faq}' p={faq_p:.2f}, presence={presence:.2f}; {why}"}
 
-    reason = (f"no FAQ answer (top '{faq}' p={faq_p:.2f}, presence={presence:.2f})"
-              if faq is not None else "no faq_match answer")
+    reason = (f"нет ответа в FAQ (лучший '{faq}' p={faq_p:.2f}, presence={presence:.2f})"
+              if faq is not None else "нет ответа faq_match")
     return {**base, "route": "llm_draft", "reason": reason}
 
 
@@ -143,7 +143,7 @@ def merge_policy(user):
             policy[key] = user[key]
     policy["thresholds"].update(user.get("thresholds", {}))
     if policy["mode"] not in ("draft", "auto"):
-        raise ValueError("policy mode must be 'draft' or 'auto'")
+        raise ValueError("режим политики должен быть 'draft' или 'auto'")
     return policy
 
 
@@ -152,11 +152,11 @@ def load(path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Route Jev-triaged messages to ignore / human / faq_template / llm_draft. No network calls.")
-    parser.add_argument("messages", nargs="?", help="JSON list of {id, channel, answers} ('-' for stdin)")
-    parser.add_argument("--policy", help="routing policy JSON (see references/routing-policy.md)")
-    parser.add_argument("--sample", action="store_true", help="route an embedded sample of 6 messages")
-    parser.add_argument("--json", action="store_true", help="output as JSON")
+    parser = argparse.ArgumentParser(description="Маршрутизация отсортированных Jev сообщений: ignore / human / faq_template / llm_draft. Без сетевых вызовов.")
+    parser.add_argument("messages", nargs="?", help="JSON-список {id, channel, answers} ('-' — stdin)")
+    parser.add_argument("--policy", help="JSON-политика маршрутизации (см. references/routing-policy.md)")
+    parser.add_argument("--sample", action="store_true", help="разобрать встроенный пример из 6 сообщений")
+    parser.add_argument("--json", action="store_true", help="вывод в JSON")
     args = parser.parse_args()
 
     try:
@@ -166,13 +166,13 @@ def main():
             messages = load(args.messages)
             user_policy = load(args.policy) if args.policy else {}
         else:
-            parser.error("give a messages file or --sample")
+            parser.error("укажите файл сообщений или --sample")
         if not isinstance(messages, list):
-            raise ValueError("messages must be a JSON list")
+            raise ValueError("сообщения должны быть JSON-списком")
         policy = merge_policy(user_policy)
         routed = [route_message(m, policy) for m in messages]
     except (OSError, json.JSONDecodeError, ValueError, TypeError, AttributeError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        print(f"ошибка: {exc}", file=sys.stderr)
         sys.exit(2)
 
     counts = {r: sum(x["route"] == r for x in routed) for r in ("ignore", "human", "faq_template", "llm_draft")}
@@ -191,9 +191,9 @@ def main():
     if args.json:
         print(json.dumps(summary, indent=2, ensure_ascii=False))
     else:
-        print(f"{total} messages, mode={policy['mode']}: ignore {counts['ignore']} | human {counts['human']} | "
-              f"template {counts['faq_template']} ({summary['auto_sent']} auto-sent) | LLM draft {llm_calls}")
-        print(f"LLM calls avoided: {summary['llm_calls_avoided']}/{total}")
+        print(f"{total} сообщений, режим={policy['mode']}: игнор {counts['ignore']} | человеку {counts['human']} | "
+              f"шаблон {counts['faq_template']} (автоотправлено {summary['auto_sent']}) | черновик LLM {llm_calls}")
+        print(f"Вызовов LLM не понадобилось: {summary['llm_calls_avoided']}/{total}")
         for r in routed:
             flag = " [SEND]" if r["send"] else ""
             print(f"  {r['route'].upper():13}{flag} {r['id']} ({r['channel']}, {r['intent']}): {r['reason']}")

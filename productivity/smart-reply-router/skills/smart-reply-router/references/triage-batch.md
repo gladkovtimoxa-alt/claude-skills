@@ -1,6 +1,6 @@
-# Triage batch — one Jev request per message
+# Пакет сортировки — один запрос Jev на сообщение
 
-Copy, then replace the intents and FAQ ids with the user's own. All five questions run in parallel in one call. API details: `engineering/jev/skills/jev/references/api-reference.md`.
+Скопируй и замени намерения и id записей FAQ на свои. Все пять вопросов выполняются параллельно одним вызовом. Подробности API: `engineering/jev/skills/jev/references/api-reference.md`.
 
 ```json
 {
@@ -9,65 +9,65 @@ Copy, then replace the intents and FAQ ids with the user's own. All five questio
     "message": {
       "channel": "email",
       "from": "customer@example.com",
-      "subject": "Order 1182",
-      "text": "Hi, I paid twice for order 1182. Can you refund one payment?"
+      "subject": "Заказ 1182",
+      "text": "Здравствуйте, я оплатил заказ 1182 дважды. Верните, пожалуйста, один платёж."
     }
   },
   "questions": {
     "intent": {
       "type": "choice",
-      "instructions": "What does the sender of `message.text` want?",
+      "instructions": "Чего хочет автор `message.text`?",
       "criteria": {
-        "pricing":   { "what": "asks what something costs, plans, discounts", "not_for": "already paid, wants money back", "examples": ["how much is the pro plan"] },
-        "how_to":    { "what": "asks how to do something with the product", "not_for": "reports that something is broken" },
-        "bug":       { "what": "something doesn't work, error, crash", "not_for": "question about how to use it" },
-        "refund":    { "what": "wants money back, double charge, cancel and refund", "not_for": "price question before buying", "examples": ["charged twice", "refund please"] },
-        "scheduling":{ "what": "wants to book, move, or cancel a meeting or call" },
-        "no_match":  { "what": "anything else, personal messages, unclear" }
+        "pricing":   { "what": "спрашивает цену, тарифы, скидки", "not_for": "уже заплатил и хочет вернуть деньги", "examples": ["сколько стоит тариф про"] },
+        "how_to":    { "what": "спрашивает, как что-то сделать в продукте", "not_for": "сообщает, что что-то сломалось" },
+        "bug":       { "what": "что-то не работает, ошибка, сбой", "not_for": "вопрос о том, как пользоваться" },
+        "refund":    { "what": "хочет вернуть деньги, двойное списание, отмена с возвратом", "not_for": "вопрос о цене до покупки", "examples": ["списали дважды", "верните деньги"] },
+        "scheduling":{ "what": "хочет записаться, перенести или отменить встречу или звонок" },
+        "no_match":  { "what": "всё остальное, личные сообщения, непонятно" }
       }
     },
     "faq_match": {
       "type": "choice",
-      "instructions": "Which knowledge-base entry fully answers `message.text`? Choose no_match if none answers it completely.",
+      "instructions": "Какая запись базы знаний полностью отвечает на `message.text`? Выбери no_match, если ни одна не отвечает целиком.",
       "criteria": {
-        "faq_prices":   { "what": "Current plans and prices", "examples": ["how much", "price list"] },
-        "faq_reset_pw": { "what": "How to reset a password", "examples": ["can't log in", "forgot password"] },
-        "faq_hours":    { "what": "Working hours and response times" },
-        "no_match":     { "what": "no entry answers the whole question" }
+        "faq_prices":   { "what": "Текущие тарифы и цены", "examples": ["сколько стоит", "прайс"] },
+        "faq_reset_pw": { "what": "Как сбросить пароль", "examples": ["не могу войти", "забыл пароль"] },
+        "faq_hours":    { "what": "Часы работы и время ответа" },
+        "no_match":     { "what": "ни одна запись не отвечает на вопрос целиком" }
       }
     },
     "urgency": {
       "type": "score",
-      "instructions": "How urgent is `message.text` for the sender?",
+      "instructions": "Насколько `message.text` срочно для отправителя?",
       "criteria": [
-        { "what": "Normal",   "signals": ["question, no deadline"] },
-        { "what": "Urgent",   "signals": ["blocks their work", "needs an answer today"] },
-        { "what": "Critical", "signals": ["work fully stopped", "money or data at risk", "threatens to leave or complain publicly"] }
+        { "what": "Обычная",  "signals": ["вопрос, срока нет"] },
+        { "what": "Срочно",   "signals": ["мешает работе", "нужен ответ сегодня"] },
+        { "what": "Критично", "signals": ["работа полностью стоит", "под угрозой деньги или данные", "грозит уйти или пожаловаться публично"] }
       ]
     },
     "is_spam": {
       "type": "noul",
-      "instructions": "Is `message.text` spam, advertising, or an automated notification that needs no reply?",
-      "criteria": { "true": "promotion, cold sales pitch, newsletter, no-reply notification", "false": "a person asking or telling something that expects an answer" }
+      "instructions": "`message.text` — спам, реклама или автоматическое уведомление, на которое не нужно отвечать?",
+      "criteria": { "true": "реклама, холодная продажа, рассылка, уведомление no-reply", "false": "человек спрашивает или сообщает что-то и ждёт ответа" }
     },
     "needs_human": {
       "type": "noul",
-      "instructions": "Does answering `message.text` require a decision or personal judgement from the owner?",
-      "criteria": { "true": "money decisions, exceptions to rules, conflicts, legal, personal relationships", "false": "information that is already documented" }
+      "instructions": "Требует ли ответ на `message.text` решения или личного суждения владельца?",
+      "criteria": { "true": "денежные решения, исключения из правил, конфликты, юридические вопросы, личные отношения", "false": "информация, которая уже описана" }
     }
   }
 }
 ```
 
-## Building the FAQ Choice
+## Как собрать Choice по FAQ
 
-- One option per KB entry, key = the entry id from the FAQ file, `what` = the question it answers, `examples` = 1-3 real phrasings from the KB's `phrasings` list.
-- Up to 255 entries per Choice. Beyond that, first route by intent, then ask `faq_match` only over that intent's entries.
-- Always keep `no_match`. Its share across a day is the best signal of what the KB is missing.
+- Один вариант на запись базы: ключ = id записи из файла FAQ, `what` = вопрос, на который она отвечает, `examples` = 1-3 реальные формулировки из списка `phrasings` записи.
+- До 255 записей в одном Choice. Больше — сначала маршрутизируй по намерению, потом спрашивай `faq_match` только по записям этого намерения.
+- Всегда оставляй `no_match`. Его доля за день — лучший сигнал того, чего не хватает в базе.
 
-## Feeding the planner
+## Вход для планировщика
 
-Save one object per message into a list and run `reply_route_planner.py` on it:
+Сохрани по одному объекту на сообщение в список и запусти на нём `reply_route_planner.py`:
 
 ```json
 [
@@ -79,4 +79,4 @@ Save one object per message into a list and run `reply_route_planner.py` on it:
 ]
 ```
 
-`answers` is exactly the `answers` object Jev returned for that message.
+`answers` — это ровно объект `answers`, который Jev вернула для этого сообщения.

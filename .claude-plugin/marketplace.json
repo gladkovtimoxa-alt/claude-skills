@@ -2097,7 +2097,7 @@
     {
       "name": "jev",
       "source": "./engineering/jev",
-      "description": "Move typed decisions (choose one / yes-no / scale) off the LLM onto Jev (TypeSafe System One): structured criteria, batched questions, probability gates in code, LLM only on escalation. Request validator + answer gate. NOT for caching/model routing (llm-cost-optimizer).",
+      "description": "Переносит типизированные решения (выбрать вариант / да-нет / шкала) с LLM на Jev (TypeSafe System One): структурные критерии, пакетные вопросы, пороги вероятностей в коде, LLM только при эскалации. Валидатор запросов и разбор ответов. НЕ для кэширования и выбора моделей (llm-cost-optimizer).",
       "version": "2.12.0",
       "author": {
         "name": "gladkovtimoxa-alt"
@@ -2116,7 +2116,7 @@
     {
       "name": "smart-reply-router",
       "source": "./productivity/smart-reply-router",
-      "description": "Answer incoming email and messenger messages while calling the LLM only for replies that need new text: Jev triage, then ignore / human / FAQ template / LLM draft. Drafts by default; red-line topics always go to the human.",
+      "description": "Ответы на входящие письма и сообщения мессенджеров с вызовом LLM только там, где нужен новый текст: сортировка Jev, затем игнор / человеку / шаблон FAQ / черновик LLM. По умолчанию черновики; красные линии всегда у человека.",
       "version": "2.12.0",
       "author": {
         "name": "gladkovtimoxa-alt"
@@ -2135,7 +2135,7 @@
     {
       "name": "telegram-bot",
       "source": "./productivity/telegram-bot",
-      "description": "Telegram bot on the official Bot API: answers known questions from a KB with zero AI tokens, relays the rest to the owner and delivers the owner's reply. Runnable stdlib bot with long polling and persistent state.",
+      "description": "Telegram-бот на официальном Bot API: отвечает на известные вопросы из базы знаний без затрат на ИИ, пересылает остальные владельцу и возвращает его ответ. Рабочий бот на стандартной библиотеке с long polling и сохранением состояния.",
       "version": "2.12.0",
       "author": {
         "name": "gladkovtimoxa-alt"
@@ -2153,7 +2153,7 @@
     {
       "name": "faq-knowledge-base",
       "source": "./productivity/faq-knowledge-base",
-      "description": "Build and maintain the Q&A knowledge base bots answer from: mine real questions, short answers with review dates, lint duplicates and stale facts, measure coverage and cluster unanswered questions.",
+      "description": "Сбор и поддержка базы вопросов и ответов для ботов: реальные вопросы, короткие ответы с датами пересмотра, поиск дублей и устаревших фактов, измерение покрытия и группировка неотвеченных вопросов.",
       "version": "2.12.0",
       "author": {
         "name": "gladkovtimoxa-alt"

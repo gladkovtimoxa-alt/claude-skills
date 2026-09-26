@@ -1,67 +1,67 @@
-# KB format and answer-writing guide
+# Формат базы и как писать ответы
 
-The format is shared by three plugins: `telegram-bot` loads it with `--kb`, `smart-reply-router` uses entry ids as `faq_match` options, and `jev` question design turns entries into Choice criteria. Keep one file per business / bot.
+Формат общий для трёх плагинов: `telegram-bot` загружает его через `--kb`, `smart-reply-router` использует id записей как варианты `faq_match`, а составление вопросов `jev` превращает записи в критерии Choice. Один файл на бизнес / бота.
 
-## Fields
+## Поля
 
 ### `meta`
 
-| Field | Required | Meaning |
+| Поле | Обязательно | Значение |
 |---|---|---|
-| `name` | no | Human name of the KB |
-| `language` | no | Main language code (`ru`, `en`) — answers should be in it |
-| `greeting` | no | Bot reply to `/start` and `/help` |
-| `fallback` | no | Bot reply when it can't answer and forwards the question |
-| `updated` | no | Last time the file was reviewed as a whole |
+| `name` | нет | Человеческое название базы |
+| `language` | нет | Основной язык (`ru`, `en`) — ответы должны быть на нём |
+| `greeting` | нет | Ответ бота на `/start` и `/help` |
+| `fallback` | нет | Ответ бота, когда он не может ответить и пересылает вопрос |
+| `updated` | нет | Когда файл последний раз пересматривался целиком |
 
 ### `entries[]`
 
-| Field | Required | Rule |
+| Поле | Обязательно | Правило |
 |---|---|---|
-| `id` | **yes** | Unique, lowercase, `a-z 0-9 _ -`, stable forever (it's referenced by logs, Jev options and routing policies). Prefix `faq_`. |
-| `question` | **yes** | Canonical question in customer language. |
-| `answer` | **yes** | What the bot sends. ≤ ~600 chars ideal, hard limit 4096 (one Telegram message). |
-| `phrasings` | recommended | 3-8 real variants from messages. The matcher and Jev learn more from these than from `question`. |
-| `intent` | recommended | Matches smart-reply-router intents (`pricing`, `how_to`, …). |
-| `owner` | recommended | Who confirms the facts. |
-| `updated` | recommended | `YYYY-MM-DD` of last confirmation. |
-| `review_by` | recommended for facts | `YYYY-MM-DD`; the linter warns once it passes. |
+| `id` | **да** | Уникальный, строчные буквы, `a-z 0-9 _ -`, не меняется никогда (на него ссылаются журналы, варианты Jev и политики маршрутизации). Префикс `faq_`. |
+| `question` | **да** | Канонический вопрос языком клиента. |
+| `answer` | **да** | Что отправляет бот. Идеально ≤ ~600 символов, жёсткий предел 4096 (одно сообщение Telegram). |
+| `phrasings` | желательно | 3-8 реальных вариантов из сообщений. Сопоставление и Jev учатся на них больше, чем на `question`. |
+| `intent` | желательно | Совпадает с намерениями smart-reply-router (`pricing`, `how_to`, …). |
+| `owner` | желательно | Кто подтверждает факты. |
+| `updated` | желательно | `YYYY-MM-DD` последнего подтверждения. |
+| `review_by` | желательно для фактов | `YYYY-MM-DD`; когда дата проходит, линтер предупреждает. |
 
-Unknown extra fields are ignored by all tools — fine for your own notes (`notes`, `source_url`).
+Неизвестные дополнительные поля все инструменты игнорируют — можно хранить свои заметки (`notes`, `source_url`).
 
-## Writing answers
+## Как писать ответы
 
-1. **Answer first.** "990 ₽/month. Pro is 2 490 ₽." — not "Thank you for your question! Our pricing…".
-2. **One follow-up detail.** Anticipate the next question in one sentence (payment methods after prices, spam folder after password reset).
-3. **No promises you can't keep.** Avoid "always", "guaranteed", exact delivery dates unless they are policy.
-4. **Link when details are long.** One sentence + a link beats a wall of text.
-5. **Same language and tone as the customers.**
-6. **Nothing private.** The KB is effectively public — anyone can ask the bot.
+1. **Сначала ответ.** «990 ₽ в месяц. Pro — 2 490 ₽.» — а не «Спасибо за вопрос! Наши цены…».
+2. **Одна деталь на опережение.** Предугадай следующий вопрос одним предложением (способы оплаты после цен, папка «Спам» после сброса пароля).
+3. **Никаких обещаний, которые не выполнить.** Избегай «всегда», «гарантированно», точных сроков доставки, если это не правило.
+4. **Ссылка, если подробностей много.** Одно предложение + ссылка лучше стены текста.
+5. **Тот же язык и тон, что у клиентов.**
+6. **Ничего личного.** База фактически публична — бота может спросить любой.
 
-## Phrasings that work
+## Формулировки, которые работают
 
-- Copy them from real messages; keep short ones ("цена", "прайс") — people type two words.
-- Include the other language if customers mix (`"how much"` next to `"сколько стоит"`).
-- Don't reuse the same phrasing in two entries — the linter flags confusable pairs at similarity ≥ 0.6.
+- Копируй их из реальных сообщений; оставляй короткие («цена», «прайс») — люди пишут два слова.
+- Добавляй второй язык, если клиенты смешивают (`"how much"` рядом с `"сколько стоит"`).
+- Не используй одну формулировку в двух записях — линтер отмечает путаемые пары при сходстве ≥ 0.6.
 
-## How matching works (so you can predict it)
+## Как работает сопоставление (чтобы его предсказывать)
 
-`faq_bot.py`, `faq_kb_linter.py` and `faq_kb_coverage.py` share one deterministic matcher:
+`faq_bot.py`, `faq_kb_linter.py` и `faq_kb_coverage.py` используют одно детерминированное сопоставление:
 
-1. Lowercase, split into words, drop common stopwords (ru + en), keep the first 5 characters of each word (a crude stem: "пароль"/"пароля" → "парол").
-2. Score = Dice similarity between the question's words and each of the entry's `question` + `phrasings`; the best variant counts. 0-100.
-3. Answer when the top score ≥ 50 **and** leads the runner-up by ≥ 10. Otherwise forward.
+1. Нижний регистр, разбиение на слова, удаление частых стоп-слов (ru + en), от каждого слова берутся первые 5 символов (грубая основа: «пароль»/«пароля» → «парол»).
+2. Оценка = коэффициент Дайса между словами вопроса и каждым из `question` + `phrasings` записи; учитывается лучший вариант. 0-100.
+3. Ответ даётся, когда лучшая оценка ≥ 50 **и** опережает вторую на ≥ 10. Иначе — пересылка.
 
-It's fast, free and predictable, and weak on synonyms. When phrasing varies a lot, switch the matcher to Jev (see `engineering/jev` and the telegram-bot reference) — the KB stays the same.
+Это быстро, бесплатно и предсказуемо, но слабо на синонимах. Когда формулировки сильно различаются, переключи сопоставление на Jev (см. `engineering/jev` и справочник telegram-bot) — база остаётся той же.
 
-## Entries as Jev Choice options
+## Записи как варианты Jev Choice
 
 ```python
 criteria = {
     e["id"]: {"what": e["question"], "examples": e.get("phrasings", [])[:3]}
     for e in kb["entries"]
 }
-criteria["no_match"] = {"what": "no entry answers the question completely"}
+criteria["no_match"] = {"what": "ни одна запись не отвечает на вопрос полностью"}
 ```
 
-Up to 255 entries per Choice. Larger KBs: route by `intent` first, then match within the intent.
+До 255 записей в одном Choice. Для больших баз сначала маршрутизируй по `intent`, потом сопоставляй внутри намерения.

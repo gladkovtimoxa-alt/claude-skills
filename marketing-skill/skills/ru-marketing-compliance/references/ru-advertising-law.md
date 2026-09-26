@@ -1,62 +1,62 @@
-# Russian advertising law — working summary for marketers
+# Российское право о рекламе — рабочая шпаргалка для маркетологов
 
-**Not legal advice.** A practitioner's map of the rules that most often break campaigns, written from the law as known in mid-2026. Before a launch with real money or a regulated category, check the current text (КонсультантПлюс / Гарант / pravo.gov.ru) and ФАС practice. Items marked 🟡 change often — verify them every time.
+**Не юридическая консультация.** Практическая карта правил, из-за которых чаще всего ломаются кампании, по состоянию закона на середину 2026 года. Перед запуском с реальными деньгами или в регулируемой категории сверьтесь с актуальным текстом (КонсультантПлюс / Гарант / pravo.gov.ru) и практикой ФАС. Пункты с пометкой 🟡 меняются часто — перепроверяйте их каждый раз.
 
-## ФЗ-38 «О рекламе» (13.03.2006) — the articles that matter
+## ФЗ-38 «О рекламе» (13.03.2006) — статьи, которые важны
 
-| Article | Rule | Typical violation |
+| Статья | Правило | Типичное нарушение |
 |---|---|---|
-| **ст. 5** — general requirements | Advertising must be fair (добросовестная) and truthful (достоверная). No false claims about advantages, properties, price, guarantees; no omission of essential conditions (ч. 7). | «Лучший», «№1», «самый» without an objective, sourced criterion; «бесплатно» hiding a subscription; guaranteed results. |
-| **ст. 6** — minors | No urging children to persuade parents to buy; no suggesting they're inferior without the product; no discrediting parents or teachers. | «Попроси маму купить», «у всех одноклассников уже есть». |
-| **ст. 7** — banned goods | Goods that can't be sold or need a licence you don't have can't be advertised. | Unlicensed financial/medical services. |
-| **ст. 18** — distribution by phone/SMS/email/messengers | Only with the recipient's **prior consent**; the distributor must prove it and stop on request. | Mass Telegram/WhatsApp/SMS blasts to bought or scraped bases. |
-| **ст. 18.1** — online ad marking | Since 01.09.2022 every online ad: label «Реклама», advertiser info (name/ИНН or a link to it), and an **erid** token obtained via an ОРД; data reported to ЕРИР (Роскомнадзор). | Telegram посевы and blogger integrations without erid; reposted creatives with a stale token. |
-| **ст. 24** — medicines, medical services and devices | Mandatory warning about contraindications and consulting a specialist (not less than 5% of the ad's area/time). | Clinic ads without the warning; cure promises. |
-| **ст. 25** — БАД | «Не является лекарственным средством»; no creating the impression it's a medicine or that it cures. | «Вылечит суставы», «замена таблеткам». |
-| **ст. 28** — financial services | Name of the provider; no guaranteeing returns or future effectiveness of investments; key terms can't be hidden. | «Доходность 30% гарантирована», trading courses promising income. |
+| **ст. 5** — общие требования | Реклама должна быть добросовестной и достоверной. Нельзя ложно заявлять о преимуществах, свойствах, цене, гарантиях; нельзя умалчивать о существенных условиях (ч. 7). | «Лучший», «№1», «самый» без объективного критерия с источником; «бесплатно» со скрытой подпиской; гарантированный результат. |
+| **ст. 6** — несовершеннолетние | Нельзя побуждать детей уговаривать родителей купить; нельзя внушать, что без товара они хуже других; нельзя дискредитировать родителей или учителей. | «Попроси маму купить», «у всех одноклассников уже есть». |
+| **ст. 7** — запрещённые товары | Нельзя рекламировать товары, которые нельзя продавать или для которых нужна отсутствующая у вас лицензия. | Нелицензированные финансовые/медицинские услуги. |
+| **ст. 18** — распространение по телефону/SMS/почте/мессенджерам | Только с **предварительного согласия** получателя; распространитель должен его доказать и прекратить по требованию. | Массовые рассылки в Telegram/WhatsApp/SMS по купленным или собранным базам. |
+| **ст. 18.1** — маркировка интернет-рекламы | С 01.09.2022 каждая интернет-реклама: пометка «Реклама», данные о рекламодателе (название/ИНН или ссылка на них) и токен **erid**, полученный через ОРД; данные передаются в ЕРИР (Роскомнадзор). | Посевы в Telegram и интеграции у блогеров без erid; перепосты креативов со старым токеном. |
+| **ст. 24** — лекарства, медицинские услуги и изделия | Обязательное предупреждение о противопоказаниях и консультации специалиста (не менее 5% площади/времени рекламы). | Реклама клиники без предупреждения; обещания излечения. |
+| **ст. 25** — БАД | «Не является лекарственным средством»; нельзя создавать впечатление, что это лекарство или что оно лечит. | «Вылечит суставы», «замена таблеткам». |
+| **ст. 28** — финансовые услуги | Название организации; нельзя гарантировать доходность или будущую эффективность вложений; ключевые условия нельзя скрывать. | «Доходность 30% гарантирована», курсы трейдинга с обещанием дохода. |
 
-Other areas with their own articles (alcohol, tobacco, gambling, weapons, credit, crypto) — read the specific article before touching them.
+У других областей свои статьи (алкоголь, табак, азартные игры, оружие, кредиты, криптовалюта) — прочитайте нужную статью, прежде чем за них браться.
 
-## Where online ads are banned 🟡
+## Где интернет-реклама запрещена 🟡
 
-Since 01.09.2024 placing ads on resources of organisations whose activity is banned in Russia (Instagram, Facebook) and on resources of иноагенты is prohibited, and so is advertising with them. Buying placements from such bloggers or on those platforms for the Russian audience is the fastest way to a fine.
+С 01.09.2024 запрещено размещать рекламу на ресурсах организаций, деятельность которых запрещена в России (Instagram, Facebook), и на ресурсах иноагентов, а также размещать рекламу у них. Покупка размещений у таких блогеров или на этих площадках для российской аудитории — самый быстрый путь к штрафу.
 
-## Marking workflow (ОРД → erid)
+## Порядок маркировки (ОРД → erid)
 
-1. Contract with the placement (or a direct deal) → register the contract with an ОРД (e.g. through the ad platform's own ОРД for Яндекс/VK, or an independent ОРД for Telegram посевы and bloggers).
-2. Register each creative → get **erid**.
-3. Publish with «Реклама», advertiser info and erid (in the text or the link: `?erid=...`).
-4. Report acts and statistics to the ОРД monthly (the ОРД passes them to ЕРИР).
-5. New creative text = new erid. Don't copy an old token to a new post.
+1. Договор на размещение (или прямая сделка) → регистрация договора в ОРД (например, через собственный ОРД площадки для Яндекса/VK или через независимый ОРД для посевов в Telegram и блогеров).
+2. Регистрация каждого креатива → получение **erid**.
+3. Публикация с «Реклама», данными о рекламодателе и erid (в тексте или в ссылке: `?erid=...`).
+4. Ежемесячные акты и статистика в ОРД (ОРД передаёт их в ЕРИР).
+5. Новый текст креатива = новый erid. Не переносите старый токен в новый пост.
 
-Self-promotion in your own channel about your own goods is generally not treated as advertising requiring marking; paid placements elsewhere are. Grey cases (barter, affiliate links, UGC with payment) — assume marking is needed. 🟡
+Самореклама своих товаров в собственном канале обычно не считается рекламой, требующей маркировки; платные размещения в чужих — считаются. Серые случаи (бартер, партнёрские ссылки, UGC за оплату) — исходите из того, что маркировка нужна. 🟡
 
-## Money and fees 🟡
+## Деньги и сборы 🟡
 
-- Fines for advertising violations are under **КоАП ст. 14.3** (for legal entities up to hundreds of thousands of rubles per violation); marking violations have their own fines. Check current amounts.
-- Since 2025 platforms/advertisers pay a mandatory **3% levy** on online advertising revenue — affects pricing of placements. Check who pays in your chain.
+- Штрафы за нарушения законодательства о рекламе — по **КоАП ст. 14.3** (для юрлиц до сотен тысяч рублей за нарушение); за нарушения маркировки — свои штрафы. Проверяйте актуальные суммы.
+- С 2025 года площадки/рекламодатели платят обязательный **сбор 3%** с доходов от интернет-рекламы — это влияет на цены размещений. Выясните, кто платит в вашей цепочке.
 
-## Personal data (152-ФЗ) for leads and messaging 🟡
+## Персональные данные (152-ФЗ) для лидов и рассылок 🟡
 
-- Collecting phone/email/Telegram handles for marketing needs consent to personal-data processing with a clear purpose.
-- Consent to process personal data must be a **separate** document/checkbox, not buried in the offer or privacy policy (in force since 01.09.2025 — verify details).
-- Marketing messages (ст. 18 ФЗ-38) need their own prior consent to receive advertising. Two different consents; log both with timestamps.
-- Store data of Russian users in Russia (localisation) and register as an operator with Роскомнадзор where required.
+- Сбор телефонов/e-mail/Telegram-аккаунтов для маркетинга требует согласия на обработку персональных данных с понятной целью.
+- Согласие на обработку ПДн должно быть **отдельным** документом/галочкой, а не спрятанным в оферте или политике конфиденциальности (действует с 01.09.2025 — детали перепроверьте).
+- Для рекламных сообщений (ст. 18 ФЗ-38) нужно собственное предварительное согласие на получение рекламы. Это два разных согласия; логируйте оба с отметкой времени.
+- Данные российских пользователей храните в России (локализация) и, где требуется, зарегистрируйтесь как оператор в Роскомнадзоре.
 
-## Consumer protection (ЗоЗПП) touchpoints
+## Защита прав потребителей (ЗоЗПП)
 
-- Distance selling: the customer can return goods of proper quality within 7 days (with exceptions); information about the seller, price and terms must be available before purchase.
-- For online courses (информационные услуги) the customer can generally cancel and get money back minus actually incurred costs — "no refunds" clauses don't hold up. Put the real refund policy in the offer.
+- Дистанционная продажа: покупатель может вернуть товар надлежащего качества в течение 7 дней (с исключениями); сведения о продавце, цена и условия должны быть доступны до покупки.
+- По онлайн-курсам (информационные услуги) покупатель, как правило, может отказаться и вернуть деньги за вычетом фактически понесённых расходов — пункты «возврата нет» не устоят. Указывайте в оферте реальные условия возврата.
 
-## Quick pre-launch checklist
+## Чек-лист перед запуском
 
-- [ ] Every claim of superiority has a source and a criterion.
-- [ ] No guaranteed outcomes, income, cures.
-- [ ] Mandatory disclaimers for the category (medicine / БАД / finance).
-- [ ] Nothing addresses children to pressure parents.
-- [ ] Online: «Реклама» + advertiser + erid; contract and creative registered in an ОРД.
-- [ ] Not placed on banned platforms or with иноагенты.
-- [ ] Mailing base: separate consents for personal data and for advertising, logged.
-- [ ] Refund terms stated and legal.
+- [ ] У каждого заявления о превосходстве есть источник и критерий.
+- [ ] Нет гарантий результата, дохода, излечения.
+- [ ] Есть обязательные предупреждения для категории (медицина / БАД / финансы).
+- [ ] Ничто не обращается к детям, чтобы давить на родителей.
+- [ ] Интернет: «Реклама» + рекламодатель + erid; договор и креатив зарегистрированы в ОРД.
+- [ ] Не размещается на запрещённых площадках и у иноагентов.
+- [ ] База для рассылки: отдельные согласия на ПДн и на рекламу, залогированы.
+- [ ] Условия возврата указаны и законны.
 
-`scripts/ad_claim_checker.py` automates the text part of this list.
+`scripts/ad_claim_checker.py` автоматизирует текстовую часть этого списка.

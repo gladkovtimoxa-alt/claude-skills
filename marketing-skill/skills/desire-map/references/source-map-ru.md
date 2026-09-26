@@ -1,8 +1,8 @@
-# Source map: «Что продавать людям»
+# Исходная карта: «Что продавать людям»
 
-Original list (24 pairs, segment → what to sell), transcribed from a YouTube Shorts video by **@yavkinen**, "Что продавать людям" (screenshots dated 2026-09-21). Kept verbatim so the critique below can point at it.
+Исходный список (24 пары «сегмент → что продавать»), переписан с видео YouTube Shorts автора **@yavkinen** «Что продавать людям» (скриншоты от 21.09.2026). Сохранён дословно, чтобы разбор ниже мог на него ссылаться.
 
-| # | Кому (segment) | Что продавать (desire) |
+| # | Кому (сегмент) | Что продавать (желание) |
 |---|---|---|
 | 1 | Мужчинам | силу |
 | 2 | Женщинам | красоту |
@@ -29,25 +29,25 @@ Original list (24 pairs, segment → what to sell), transcribed from a YouTube S
 | 23 | Спортсменам | результат |
 | 24 | Уставшим | отдых |
 
-## What's right about it
+## Что в нём верно
 
-The core idea is sound and old: people don't buy the product, they buy the change it makes in their life ("sell the hole, not the drill"). A list like this is a fast way to stop describing features and start naming the outcome.
+Основная идея здравая и давно известная: люди покупают не продукт, а изменение, которое он вносит в их жизнь («продавай дырку, а не дрель»). Такой список быстро отучает описывать характеристики и заставляет называть результат.
 
-## What's wrong with it (and what the skill does instead)
+## Что в нём не так (и что делает скил вместо этого)
 
-| # | Problem | Evidence in the list | Fix in this skill |
+| # | Проблема | Где это видно | Исправление в скиле |
 |---|---|---|---|
-| 1 | **Segments mix different axes.** Demographics (men, elderly), roles (investors, bloggers), states of mind (anxious, tired), traits (lazy, ambitious) sit in one column. One person is several at once: a tired, busy entrepreneur-parent. | #1, #7, #9, #12, #16, #24 | Segment by **situation and trigger** (what just happened that makes them look for a solution), then pick the desire. Labels are only search terms. |
-| 2 | **Duplicates and overlaps.** Parents appear twice (#4, #16). Lazy / busy / tired (#9, #10, #24) all buy the same thing: less effort. | #4/#16, #9/#10/#24 | Merged into 7 value clusters; duplicates become one segment with two desires. |
-| 3 | **Stereotypes.** "Men — strength, women — beauty" excludes most of both groups and can read as sexist in copy. | #1, #2 | Segment by **goal** ("wants to get stronger", "wants to look better"), never by gender alone. |
-| 4 | **Vulnerable groups are sold feelings the seller can't deliver.** Hope to the poor, love to the lonely, confidence to the anxious, health to the elderly, dreams to children: the highest-converting and highest-harm promises. | #3, #6, #7, #8, #14 | Flagged `vulnerable`. Sell a concrete, checkable result and let the feeling follow; no fear appeals; legal checks (ФЗ-38 ст. 5, 6, 24, 25, 28) via **ru-marketing-compliance**. |
-| 5 | **A desire is not an offer.** "Sell them money" says nothing about mechanism, proof, price, or why you. | all | Every cluster carries: honest promise, required proof, red line, message template. |
-| 6 | **It's a guess, not data.** No evidence that *your* customers want this. | all | The map produces hypotheses; the validation playbook checks them against customers' own words and conversion data. |
-| 7 | **Missing buyers.** B2B decision-makers, beginners, sceptics, and the user-vs-payer split (parent pays, child uses) aren't there. | — | Added: ЛПР/закупщики → no risk + accountability; новички → a clear first step; скептики → proof; payer ≠ user handled explicitly. |
+| 1 | **Смешаны разные оси сегментации.** Демография (мужчины, пожилые), роли (инвесторы, блогеры), состояния (тревожные, уставшие), черты (ленивые, амбициозные) стоят в одной колонке. Один человек — сразу несколько: уставший занятой предприниматель-родитель. | #1, #7, #9, #12, #16, #24 | Сегментировать по **ситуации и триггеру** (что случилось, из-за чего человек ищет решение), затем выбирать желание. Ярлыки — только поисковые слова. |
+| 2 | **Дубли и пересечения.** Родители встречаются дважды (#4, #16). Ленивые / занятые / уставшие (#9, #10, #24) покупают одно и то же: меньше усилий. | #4/#16, #9/#10/#24 | Сведено в 7 кластеров ценности; дубли стали одним сегментом с двумя желаниями. |
+| 3 | **Стереотипы.** «Мужчинам — силу, женщинам — красоту» отсекает большую часть обеих групп и в тексте может читаться как сексизм. | #1, #2 | Сегментировать по **цели** («хочет стать сильнее», «хочет выглядеть лучше»), никогда только по полу. |
+| 4 | **Уязвимым группам продают чувства, которые продавец не может дать.** Надежду бедным, любовь одиноким, уверенность тревожным, здоровье пожилым, мечту детям — самые продающие и самые вредные обещания. | #3, #6, #7, #8, #14 | Помечены `vulnerable`. Продавать конкретный проверяемый результат, чувство придёт само; без запугивания; юридическая проверка (ФЗ-38 ст. 5, 6, 24, 25, 28) через **ru-marketing-compliance**. |
+| 5 | **Желание — ещё не оффер.** «Продайте им деньги» ничего не говорит о механизме, доказательствах, цене и «почему вы». | все | У каждого кластера есть: честное обещание, нужные доказательства, красная линия, шаблон сообщения. |
+| 6 | **Это догадка, а не данные.** Нет свидетельств, что именно *ваши* клиенты этого хотят. | все | Карта даёт гипотезы; руководство по проверке сверяет их со словами клиентов и данными конверсии. |
+| 7 | **Не хватает покупателей.** Нет ЛПР в B2B, новичков, скептиков и разделения «пользуется / платит» (платит родитель, пользуется ребёнок). | — | Добавлено: ЛПР/закупщики → отсутствие риска + отчётность; новички → понятный первый шаг; скептики → доказательства; разделение плательщика и пользователя учтено явно. |
 
-## Mapping to clusters
+## Какие пары в какой кластер
 
-| Cluster | Original rows |
+| Кластер | Строки исходного списка |
 |---|---|
 | A. Безопасность и спокойствие | 4, 5, 7, 16 |
 | B. Тело: здоровье, сила, красота, результат | 1, 2, 14, 23 |
@@ -57,4 +57,4 @@ The core idea is sound and old: people don't buy the product, they buy the chang
 | F. Связь и доверие | 8, 19 |
 | G. Впечатления и свобода | 3, 15, 20 |
 
-Full cluster definitions (promise, proof, red line, template) live in `scripts/desire_map_planner.py` (`--list`) and in [clusters.md](clusters.md).
+Полные определения кластеров (обещание, доказательства, красная линия, шаблон) — в `scripts/desire_map_planner.py` (`--list`) и в [clusters.md](clusters.md).

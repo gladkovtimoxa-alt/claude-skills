@@ -1,100 +1,100 @@
-# Value clusters
+# Кластеры ценности
 
-Generated from `scripts/desire_map_planner.py --markdown`. Edit the script, not this file.
+Сгенерировано командой `scripts/desire_map_planner.py --markdown`. Правьте скрипт, а не этот файл.
 
 ## A_security — Безопасность и спокойствие / Safety and peace of mind
 
-- **Honest promise:** Remove a specific risk or uncertainty the customer can name
-- **Proof required:** Process guarantees (not outcome guarantees), transparent terms, refund policy, reviews from people in the same situation
-- **Red line:** Fear appeals that invent or inflate the threat; promising that nothing bad will ever happen
-- **Template:** `{segment}: stop worrying about {risk} — {mechanism}, and if {failure}, {remedy}.`
+- **Честное обещание:** Убрать конкретный риск или неопределённость, которую клиент может назвать
+- **Нужные доказательства:** Гарантии процесса (а не результата), прозрачные условия, политика возврата, отзывы людей в той же ситуации
+- **Красная линия:** Запугивание, которое придумывает или раздувает угрозу; обещание, что ничего плохого никогда не случится
+- **Шаблон:** `{segment}: больше не нужно беспокоиться о {risk} — {mechanism}, а если {failure}, то {remedy}.`
 
-| Segment | Desire | Vulnerable | Note |
+| Сегмент | Желание | Уязвимый | Примечание |
 |---|---|---|---|
-| Родители | спокойствие, будущее детей |  | Rows 4 and 16 merged. Sell a checkable outcome for the child plus visibility for the parent. |
-| Богатые | безопасность |  | Discretion and zero-hassle matter more than price. |
-| Тревожные | уверенность | yes | No fear appeals. Reduce uncertainty with clear terms, steps and a way out. |
-| ЛПР / закупщики (добавлено) | отсутствие риска, отчётность |  | Added: B2B buyers need 'nobody gets blamed' and numbers for their boss more than 'growth'. |
+| Родители | спокойствие, будущее детей |  | Строки 4 и 16 объединены. Продавай проверяемый результат для ребёнка плюс прозрачность для родителя. |
+| Богатые | безопасность |  | Конфиденциальность и отсутствие хлопот важнее цены. |
+| Тревожные | уверенность | да | Без запугивания. Снижай неопределённость понятными условиями, шагами и возможностью выйти. |
+| ЛПР / закупщики (добавлено) | отсутствие риска, отчётность |  | Добавлено: B2B-покупателю важнее «меня не обвинят» и цифры для начальника, чем «рост». |
 
 ## B_body — Тело: здоровье, сила, красота, результат / Body: health, strength, looks, performance
 
-- **Honest promise:** A measurable change over a stated period, for people with a stated starting point
-- **Proof required:** Honest before/after with conditions, credentials, how many people actually got there
-- **Red line:** Cure claims, 'no side effects', body shaming, supplements presented as medicine (ФЗ-38 ст. 24, 25)
-- **Template:** `{segment}: {measurable result} in {period} if you {effort} — here's how {n} people did it.`
+- **Честное обещание:** Измеримое изменение за указанный срок для людей с указанной исходной точкой
+- **Нужные доказательства:** Честные «до/после» с условиями, квалификация, сколько людей реально этого достигли
+- **Красная линия:** Обещания излечения, «без побочных эффектов», стыжение за внешность, БАД под видом лекарства (ФЗ-38 ст. 24, 25)
+- **Шаблон:** `{segment}: {measurable result} за {period}, если вы {effort} — вот как это сделали {n} человек.`
 
-| Segment | Desire | Vulnerable | Note |
+| Сегмент | Желание | Уязвимый | Примечание |
 |---|---|---|---|
-| Мужчины (по цели: сила) | сила |  | Segment by the goal 'wants to get stronger', not by gender. |
-| Женщины (по цели: красота) | красота |  | Segment by the goal 'wants to look/feel better', not by gender. |
-| Пожилые | здоровье | yes | Highest fraud exposure. No cure claims; involve family; simple terms. |
-| Спортсмены | результат |  | Measurable performance change with conditions. |
+| Мужчины (по цели: сила) | сила |  | Сегментируй по цели «хочет стать сильнее», а не по полу. |
+| Женщины (по цели: красота) | красота |  | Сегментируй по цели «хочет выглядеть/чувствовать себя лучше», а не по полу. |
+| Пожилые | здоровье | да | Самый высокий риск мошенничества. Без обещаний излечения; вовлекай семью; простые условия. |
+| Спортсмены | результат |  | Измеримое изменение результатов с условиями. |
 
 ## C_ease — Время и простота / Time and ease
 
-- **Honest promise:** Fewer steps, fewer minutes, fewer decisions
-- **Proof required:** Minutes saved, steps removed, a demo of the whole flow
-- **Red line:** Calling customers lazy in the copy; hiding the effort that is still required
-- **Template:** `{segment}: {task} in {minutes} minutes instead of {old_minutes} — {mechanism}.`
+- **Честное обещание:** Меньше шагов, минут и решений
+- **Нужные доказательства:** Сэкономленные минуты, убранные шаги, демонстрация всего процесса
+- **Красная линия:** Называть клиентов ленивыми в тексте; скрывать усилия, которые всё равно понадобятся
+- **Шаблон:** `{segment}: {task} за {minutes} минут вместо {old_minutes} — {mechanism}.`
 
-| Segment | Desire | Vulnerable | Note |
+| Сегмент | Желание | Уязвимый | Примечание |
 |---|---|---|---|
-| Не хотят разбираться (в оригинале «ленивые») | простота |  | Never call the customer lazy in copy: 'without having to figure it out'. |
-| Занятые | экономия времени |  | Quantify minutes saved. |
-| Уставшие | отдых |  | Merged with busy/no-hassle into one 'less effort' cluster. |
-| Новички (добавлено) | понятный первый шаг |  | Added: sell the first small win, not the whole transformation. |
+| Не хотят разбираться (в оригинале «ленивые») | простота |  | Никогда не называй клиента ленивым в тексте: «без необходимости разбираться». |
+| Занятые | экономия времени |  | Считай сэкономленные минуты. |
+| Уставшие | отдых |  | Объединено с «занятыми» и «не хотят разбираться» в один кластер «меньше усилий». |
+| Новички (добавлено) | понятный первый шаг |  | Добавлено: продавай первую маленькую победу, а не всю трансформацию. |
 
 ## D_money — Деньги и рост / Money and growth
 
-- **Honest promise:** A tool, skill or channel with a realistic, sourced range of outcomes
-- **Proof required:** Cases with numbers and the median, not only the best; an ROI calculator with the customer's own inputs
-- **Red line:** Guaranteed income or returns (ФЗ-38 ст. 28 for financial services), selling 'hope' to people in financial distress, 'no investment needed' when there is one
-- **Template:** `{segment}: {concrete capability} — typical result {range} after {period}, median {median}. Here's what it takes.`
+- **Честное обещание:** Инструмент, навык или канал с реалистичным и подтверждённым диапазоном результатов
+- **Нужные доказательства:** Кейсы с цифрами и медианой, а не только лучшие; ROI-калькулятор на данных самого клиента
+- **Красная линия:** Гарантированный доход или доходность (ФЗ-38 ст. 28 для финансовых услуг), продажа «надежды» людям в финансовой беде, «без вложений», когда вложения нужны
+- **Шаблон:** `{segment}: {concrete capability} — типичный результат {range} через {period}, медиана {median}. Вот что для этого нужно.`
 
-| Segment | Desire | Vulnerable | Note |
+| Сегмент | Желание | Уязвимый | Примечание |
 |---|---|---|---|
-| Люди с низким доходом | надежда | yes | Don't sell hope. Sell a cheap, concrete, checkable step (skill, tool, saving) with honest odds. |
-| Предприниматели | деньги |  | Money = more revenue, lower cost or less risk; show which and how much. |
-| Инвесторы | доходность |  | Past returns are not a promise; no guaranteed yield (ФЗ-38 ст. 28). |
-| Компании | рост |  | Buyer is a person: see decision-makers. |
-| Блогеры | заработок |  | Show median creator outcomes, not the top 1%. |
+| Люди с низким доходом | надежда | да | Не продавай надежду. Продавай дешёвый, конкретный, проверяемый шаг (навык, инструмент, экономию) с честными шансами. |
+| Предприниматели | деньги |  | Деньги = больше выручки, меньше затрат или меньше риска; покажи, что именно и сколько. |
+| Инвесторы | доходность |  | Прошлая доходность — не обещание; никакой гарантированной доходности (ФЗ-38 ст. 28). |
+| Компании | рост |  | Покупает человек: см. ЛПР. |
+| Блогеры | заработок |  | Показывай медианный результат авторов, а не верхний 1%. |
 
 ## E_status — Статус и уникальность / Status and uniqueness
 
-- **Honest promise:** Access, recognition or ownership that really is limited
-- **Proof required:** Real limits (edition size, provenance, selection criteria)
-- **Red line:** Fake scarcity ('only 3 left' that resets), unverifiable 'best/№1' claims (ФЗ-38 ст. 5)
-- **Template:** `{segment}: {what} — {limit} and why it is limited.`
+- **Честное обещание:** Доступ, признание или обладание, которые действительно ограничены
+- **Нужные доказательства:** Реальные ограничения (размер тиража, происхождение, критерии отбора)
+- **Красная линия:** Фальшивый дефицит («осталось 3», которое обнуляется), недоказуемые «лучший/№1» (ФЗ-38 ст. 5)
+- **Шаблон:** `{segment}: {what} — {limit} и почему это ограничено.`
 
-| Segment | Desire | Vulnerable | Note |
+| Сегмент | Желание | Уязвимый | Примечание |
 |---|---|---|---|
-| Амбициозные | статус |  | Status must be real: selection, recognition, access. |
-| Покупатели премиума | эксклюзивность |  | Exclusivity has to be verifiable. |
-| Коллекционеры | редкость |  | Provenance and edition size beat adjectives. |
+| Амбициозные | статус |  | Статус должен быть настоящим: отбор, признание, доступ. |
+| Покупатели премиума | эксклюзивность |  | Эксклюзивность должна быть проверяемой. |
+| Коллекционеры | редкость |  | Происхождение и размер тиража важнее прилагательных. |
 
 ## F_connection — Связь и доверие / Connection and trust
 
-- **Honest promise:** A place, person or proof that makes trust easy to give
-- **Proof required:** Credentials, community size and activity, public reviews, transparent authorship
-- **Red line:** Exploiting loneliness (romance, 'only we understand you'), fake reviews, paid testimonials without disclosure
-- **Template:** `{segment}: {who/what} you can check yourself — {evidence}.`
+- **Честное обещание:** Место, человек или доказательство, которому легко довериться
+- **Нужные доказательства:** Квалификация, размер и активность сообщества, публичные отзывы, прозрачное авторство
+- **Красная линия:** Эксплуатация одиночества (романтика, «только мы вас понимаем»), фальшивые отзывы, оплаченные отзывы без раскрытия
+- **Шаблон:** `{segment}: {who/what}, что вы можете проверить сами — {evidence}.`
 
-| Segment | Desire | Vulnerable | Note |
+| Сегмент | Желание | Уязвимый | Примечание |
 |---|---|---|---|
-| Одинокие | любовь | yes | Sell a real community or a service with honest expectations; never imply love is guaranteed. |
-| Эксперты | доверие |  | Trust is built by proof they can show, not by claims. |
-| Скептики (добавлено) | доказательства |  | Added: lead with proof and a risk-free trial. |
+| Одинокие | любовь | да | Продавай настоящее сообщество или услугу с честными ожиданиями; никогда не намекай, что любовь гарантирована. |
+| Эксперты | доверие |  | Доверие строится доказательствами, которые можно показать, а не заявлениями. |
+| Скептики (добавлено) | доказательства |  | Добавлено: начинай с доказательств и пробного периода без риска. |
 
 ## G_experience — Впечатления и свобода / Experience and freedom
 
-- **Honest promise:** A vivid experience or a real removal of a constraint
-- **Proof required:** Real photos/video, detailed itinerary or terms, what is not included
-- **Red line:** Pressuring children to ask parents to buy (ФЗ-38 ст. 6); 'freedom' that hides long commitments
-- **Template:** `{segment}: {experience} — exactly what's included, and what isn't.`
+- **Честное обещание:** Яркое впечатление или реальное снятие ограничения
+- **Нужные доказательства:** Настоящие фото/видео, подробная программа или условия, что НЕ включено
+- **Красная линия:** Давление на детей, чтобы они уговаривали родителей купить (ФЗ-38 ст. 6); «свобода», за которой скрыты долгие обязательства
+- **Шаблон:** `{segment}: {experience} — что именно входит, а что нет.`
 
-| Segment | Desire | Vulnerable | Note |
+| Сегмент | Желание | Уязвимый | Примечание |
 |---|---|---|---|
-| Дети | мечта | yes | The payer is the parent. Address parents; never urge children to persuade them (ФЗ-38 ст. 6). |
-| Молодые | свобода |  | Freedom must not hide long contracts or debt. |
-| Путешественники | эмоции |  | Show the experience honestly, including what isn't included. |
+| Дети | мечта | да | Платит родитель. Обращайся к родителям; никогда не побуждай детей уговаривать их (ФЗ-38 ст. 6). |
+| Молодые | свобода |  | Свобода не должна скрывать долгие договоры или долги. |
+| Путешественники | эмоции |  | Показывай впечатление честно, включая то, что не входит. |
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FAQ KB coverage — measure how many real questions the knowledge base answers, and cluster the rest.
+"""Покрытие базы FAQ — сколько реальных вопросов закрывает база знаний, и группировка остальных.
 
 Runs a list of real incoming questions (a text file, a JSON list, or the
 `unanswered` log from telegram-bot's state file) through the same token matcher
@@ -81,21 +81,21 @@ def load_questions(path):
         if isinstance(data, dict) and "unanswered" in data:
             data = data["unanswered"]
         if not isinstance(data, list):
-            raise ValueError("questions JSON must be a list, or a bot state file with `unanswered`")
+            raise ValueError("JSON вопросов должен быть списком или файлом состояния бота с `unanswered`")
         return [d["text"] if isinstance(d, dict) else str(d) for d in data if d]
     with open(path, encoding="utf-8") as f:
         return [line.strip() for line in f if line.strip()]
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Measure FAQ KB coverage on real questions and cluster the unanswered ones. No network.")
-    parser.add_argument("kb", nargs="?", help="KB JSON file")
-    parser.add_argument("questions", nargs="?", help="questions: .txt (one per line), .json list, or telegram-bot state file")
-    parser.add_argument("--sample", action="store_true", help="run on an embedded KB and 10 sample questions")
-    parser.add_argument("--min-score", type=int, default=50, help="match score 0-100 needed to count as answered (bot default 50)")
-    parser.add_argument("--min-margin", type=int, default=10, help="lead over the runner-up (bot default 10)")
-    parser.add_argument("--target", type=float, default=60.0, help="coverage %% target for the exit code")
-    parser.add_argument("--json", action="store_true", help="output as JSON")
+    parser = argparse.ArgumentParser(description="Покрытие базы FAQ на реальных вопросах и группировка неотвеченных. Без сети.")
+    parser.add_argument("kb", nargs="?", help="JSON-файл базы")
+    parser.add_argument("questions", nargs="?", help="вопросы: .txt (по одному в строке), JSON-список или файл состояния telegram-bot")
+    parser.add_argument("--sample", action="store_true", help="запуск на встроенной базе и 10 примерах вопросов")
+    parser.add_argument("--min-score", type=int, default=50, help="оценка совпадения 0-100, при которой вопрос считается отвеченным (у бота по умолчанию 50)")
+    parser.add_argument("--min-margin", type=int, default=10, help="отрыв от второй записи (у бота по умолчанию 10)")
+    parser.add_argument("--target", type=float, default=60.0, help="целевое покрытие в %% для кода выхода")
+    parser.add_argument("--json", action="store_true", help="вывод в JSON")
     args = parser.parse_args()
 
     try:
@@ -105,12 +105,12 @@ def main():
             kb = json.load(open(args.kb, encoding="utf-8"))
             questions = load_questions(args.questions)
         else:
-            parser.error("give KB and questions files, or --sample")
+            parser.error("укажите файлы базы и вопросов или --sample")
         entries = [e for e in kb.get("entries", []) if isinstance(e, dict) and e.get("id")]
         if not entries:
-            raise ValueError("KB has no usable entries")
+            raise ValueError("в базе нет пригодных записей")
     except (OSError, json.JSONDecodeError, ValueError, AttributeError, KeyError, TypeError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        print(f"ошибка: {exc}", file=sys.stderr)
         sys.exit(2)
 
     hits = {e["id"]: 0 for e in entries}
@@ -136,14 +136,14 @@ def main():
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
-        print(f"Coverage {coverage}% ({result['answered']}/{total}), target {args.target}%")
-        print("Hits: " + ", ".join(f"{k}={v}" for k, v in sorted(hits.items(), key=lambda x: -x[1])))
+        print(f"Покрытие {coverage}% ({result['answered']}/{total}), цель {args.target}%")
+        print("Попадания: " + ", ".join(f"{k}={v}" for k, v in sorted(hits.items(), key=lambda x: -x[1])))
         if result["never_matched"]:
-            print("Never matched (check phrasings or retire): " + ", ".join(result["never_matched"]))
+            print("Ни разу не сработали (проверьте формулировки или удалите): " + ", ".join(result["never_matched"]))
         if clusters:
-            print("New entry candidates (biggest first):")
+            print("Кандидаты в новые записи (крупные первыми):")
             for c in clusters[:10]:
-                print(f"  {c['size']}x  e.g. \"{c['example']}\"")
+                print(f"  {c['size']}x  например: \"{c['example']}\"")
     sys.exit(0 if coverage >= args.target else 1)
 
 

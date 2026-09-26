@@ -1,6 +1,6 @@
 {
   "name": "telegram-bot",
-  "description": "Telegram bot on the official Bot API that answers known questions from a knowledge-base file with zero AI tokens, relays unknown ones to the owner and sends the owner's reply back. Runnable stdlib bot (long polling, persistent state, 429 handling), BotFather and secrets setup, deployment recipes, and optional Jev routing / owner-approved LLM drafts.",
+  "description": "Telegram-бот на официальном Bot API: отвечает на известные вопросы из базы знаний без затрат на ИИ, пересылает остальные владельцу и возвращает его ответ спросившему. Рабочий бот на стандартной библиотеке (long polling, сохранение состояния, обработка 429), настройка BotFather и секретов, рецепты развёртывания, по желанию — маршрутизация Jev и черновики LLM с утверждением владельцем.",
   "version": "2.12.0",
   "author": {
     "name": "gladkovtimoxa-alt",

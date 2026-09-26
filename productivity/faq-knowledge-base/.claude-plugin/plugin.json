@@ -1,0 +1,15 @@
+{
+  "name": "faq-knowledge-base",
+  "description": "Сбор и поддержка базы вопросов и ответов, из которой отвечают боты и автоответчики: извлечь реальные вопросы, написать короткие ответы с датами пересмотра, собрать формулировки клиентов, найти дубли, пустые ответы, устаревшие факты и путаемые записи (оценка 0-100), измерить покрытие на реальном потоке и сгруппировать неотвеченные вопросы. JSON-формат общий с telegram-bot и smart-reply-router.",
+  "version": "2.12.0",
+  "author": {
+    "name": "gladkovtimoxa-alt",
+    "url": "https://github.com/gladkovtimoxa-alt"
+  },
+  "homepage": "https://github.com/gladkovtimoxa-alt/claude-skills/tree/main/productivity/faq-knowledge-base",
+  "repository": "https://github.com/gladkovtimoxa-alt/claude-skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/faq-knowledge-base"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "telegram-bot",
+  "description": "Telegram-бот на официальном Bot API: отвечает на известные вопросы из базы знаний без затрат на ИИ, пересылает остальные владельцу и возвращает его ответ спросившему. Рабочий бот на стандартной библиотеке (long polling, сохранение состояния, обработка 429), настройка BotFather и секретов, рецепты развёртывания, по желанию — маршрутизация Jev и черновики LLM с утверждением владельцем.",
+  "version": "2.12.0",
+  "author": {
+    "name": "gladkovtimoxa-alt",
+    "url": "https://github.com/gladkovtimoxa-alt"
+  },
+  "homepage": "https://github.com/gladkovtimoxa-alt/claude-skills/tree/main/productivity/telegram-bot",
+  "repository": "https://github.com/gladkovtimoxa-alt/claude-skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/telegram-bot"
+  ]
+}

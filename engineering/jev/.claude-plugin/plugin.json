@@ -1,0 +1,15 @@
+{
+  "name": "jev",
+  "description": "Переносит типизированные решения (выбрать вариант / да-нет / позиция на шкале) с LLM на Jev (TypeSafe System One): структурные критерии, пакетные вопросы, пороги вероятностей в коде, LLM только при эскалации. Валидатор запросов и разбор ответов на стандартной библиотеке.",
+  "version": "2.12.0",
+  "author": {
+    "name": "gladkovtimoxa-alt",
+    "url": "https://github.com/gladkovtimoxa-alt"
+  },
+  "homepage": "https://github.com/gladkovtimoxa-alt/claude-skills/tree/main/engineering/jev",
+  "repository": "https://github.com/gladkovtimoxa-alt/claude-skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/jev"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "source": {
+    "build_pattern": "Path-B method skill — curated Q&A knowledge base mined from real messages, with deterministic linting and coverage measurement sharing the telegram-bot matcher",
+    "distinct_from": "productivity/email inbox-setup (builds a personal email-triage knowledge base of taxonomy and patterns; faq-knowledge-base builds customer-facing answers)"
+  }
+}

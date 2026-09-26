@@ -1,0 +1,6 @@
+{
+  "source": {
+    "build_pattern": "Path-B method skill — official Telegram Bot API FAQ bot with owner relay, KB-first answering and AI added only as an opt-in extension",
+    "distinct_from": "productivity/smart-reply-router (channel-agnostic Jev/LLM routing policy; telegram-bot is the runnable Telegram transport and owner relay)"
+  }
+}

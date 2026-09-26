@@ -77,6 +77,7 @@ User wants to assess their marketing → you run a cross-functional audit touchi
 | "Video strategy," "short-form video," "video content plan" | **video-content-strategist** (sibling folder `video-content-strategist/`) | Not youtube-full (that's YouTube-specific + API-backed) |
 | "Webinar," "webinar funnel," "registration rate," "show-up rate" | **webinar-marketing** | |
 | "App Store," "Play Store," "ASO," "app keywords" | **app-store-optimization** | Not seo-audit (that's web search) |
+| "Маркировка," "erid," "закон о рекламе," "Telegram посевы," "Яндекс Директ," "VK Ads," "Russian market" | **ru-marketing-compliance** | Not paid-ads (that's Google/Meta mechanics) |
 
 ### Growth Pod
 | Trigger | Route to | NOT this |
@@ -93,6 +94,7 @@ User wants to assess their marketing → you run a cross-functional audit touchi
 | "Set up tracking," "GA4," "GTM," "event tracking" | **analytics-tracking** | Not campaign-analytics (that's for analysis) |
 | "Competitor page," "vs page," "alternative page" | **competitor-alternatives** | |
 | "Psychology," "persuasion," "behavioral science" | **marketing-psychology** | |
+| "What to sell to whom," "что продавать," "core desire," "боли и желания ЦА" | **desire-map** | Not marketing-psychology (that's how to persuade, not what to promise) |
 | "Analyze my social accounts," "engagement rate," "social audit" | **social-media-analyzer** | Not social-media-manager (that's planning, not analysis) |
 | "Marketing prompts," "prompt templates," "LLM governance for marketing" | **prompt-engineer-toolkit** | |
 

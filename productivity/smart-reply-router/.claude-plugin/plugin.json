@@ -1,0 +1,15 @@
+{
+  "name": "smart-reply-router",
+  "description": "Ответы на входящие письма и сообщения мессенджеров, при которых LLM вызывается только там, где нужен новый текст: Jev сортирует каждое сообщение одним пакетом (намерение, запись FAQ, срочность, спам, нужен ли человек), код направляет в игнор / человеку / шаблон FAQ / черновик LLM. По умолчанию черновики; автоотправка только разрешённых шаблонов FAQ по явному согласию; красные линии всегда у человека.",
+  "version": "2.12.0",
+  "author": {
+    "name": "gladkovtimoxa-alt",
+    "url": "https://github.com/gladkovtimoxa-alt"
+  },
+  "homepage": "https://github.com/gladkovtimoxa-alt/claude-skills/tree/main/productivity/smart-reply-router",
+  "repository": "https://github.com/gladkovtimoxa-alt/claude-skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/smart-reply-router"
+  ]
+}

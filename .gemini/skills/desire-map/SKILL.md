@@ -1,0 +1,1 @@
+../../../marketing-skill/skills/desire-map/SKILL.md

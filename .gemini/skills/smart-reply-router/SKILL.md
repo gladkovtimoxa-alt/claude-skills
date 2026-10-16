@@ -1,0 +1,1 @@
+../../../productivity/smart-reply-router/skills/smart-reply-router/SKILL.md

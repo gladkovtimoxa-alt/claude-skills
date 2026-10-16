@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added — engineering/local-llm-memory: pick a memory backend for a self-hosted agent
+
+New `engineering/local-llm-memory/` plugin, answering a gap neither existing memory skill
+covers: `memory-engineering` decides *whether/what kind* of memory architecture to build,
+hosting-agnostic; `agent-memory` is a generic, cloud-first L0-L3 hook ladder. Neither answers
+"which local embedding backend and vector store, given that the chat model (LM Studio/Ollama/
+llama.cpp) already occupies the only GPU/CPU slot on this box."
+
+- **One stdlib tool, `local_memory_backend_picker.py`** — scores ChromaDB+ONNX MiniLM,
+  sqlite-vec, FAISS, plain JSONL-lexical, and a managed cloud vector DB against
+  `--expected-records`, `--ram-budget-mb`, and `--offline-required`. The cloud backend is
+  **disqualified outright** (not merely penalized) the moment `--offline-required` is set —
+  the two are a contradiction, not a trade-off. `--help`/`--sample`/`--output json` all pass.
+- **One reference, `local-embedding-stacks.md`**, citing primary docs (ONNX Runtime, Chroma,
+  sqlite-vec, FAISS, LM Studio REST API, llama.cpp server, Ollama, Hugging Face Hub offline
+  mode) for every backend claim, plus three failure modes specific to self-hosted setups:
+  shared-inference-slot queueing when the embedder and chat model share one
+  `maxConcurrentPredictions=1` server, a silent embedding-dimension mismatch after a model
+  swap that degrades recall without erroring, and "offline" libraries that still phone home
+  on install/import unless explicitly configured not to.
+- **Counters:** skills 394 → 395; tools 735 → 736; refs 853 → 854; plugins 103 → 104
+  (verified via `scripts/derive_counters.py --check`).
+
 ### Added — engineering/spinning-up-deep-rl: the first book compiled by book-to-skill
 
 Knowledge-base plugin compiled end-to-end by `engineering/book-to-skill` from OpenAI's

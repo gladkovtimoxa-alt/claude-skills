@@ -1,0 +1,1 @@
+../../../engineering/local-llm-memory/skills/local-llm-memory/SKILL.md

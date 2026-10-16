@@ -1,0 +1,6 @@
+{
+  "source": {
+    "build_pattern": "Single-lens scoring tool (RAM budget x expected record count x offline-required) over 5 fixed local/cloud backend profiles, with a hard disqualification rule rather than a soft penalty for the offline-vs-cloud contradiction. Companion reference cites primary docs (ONNX Runtime, Chroma, sqlite-vec, FAISS, LM Studio, llama.cpp, Ollama, Hugging Face Hub offline mode) for every backend claim and names 3 failure modes specific to sharing one local inference slot between a chat model and a memory-write embedder.",
+    "distinct_from": "memory-engineering (decides whether/what architecture family to build — long-context/RAG/graph/agentic — independent of where the model runs); agent-memory (a generic hook-based L0-L3 memory ladder for Claude Code sessions, written cloud-first, no offline constraint or embedding-backend choice)"
+  }
+}

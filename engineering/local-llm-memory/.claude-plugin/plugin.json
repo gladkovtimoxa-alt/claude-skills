@@ -1,0 +1,15 @@
+{
+  "name": "local-llm-memory",
+  "description": "Pick an embedding backend and vector/memory store for an agent running on a self-hosted model (LM Studio/Ollama/llama.cpp) instead of a cloud API — fully offline, sized against the same machine's RAM/VRAM the chat model already uses. One deterministic stdlib script scores ChromaDB+ONNX MiniLM, sqlite-vec, FAISS, plain JSONL-lexical, and managed-cloud-vector-DB against expected record count, RAM budget, and an offline-required flag, disqualifying the cloud option outright when offline is required. Ships a reference on the local-LLM-specific failure modes (shared-inference-slot queueing, silent embedding-dimension mismatch after a model swap, offline claims that still phone home). Distinct from memory-engineering (architecture-family choice, hosting-agnostic) and agent-memory (cloud-first L0-L3 hook ladder).",
+  "version": "1.0.0",
+  "author": {
+    "name": "gladkovtimoxa-alt",
+    "url": "https://github.com/gladkovtimoxa-alt"
+  },
+  "homepage": "https://github.com/gladkovtimoxa-alt/claude-skills/tree/main/engineering/local-llm-memory",
+  "repository": "https://github.com/gladkovtimoxa-alt/claude-skills",
+  "license": "MIT",
+  "skills": [
+    "./skills/local-llm-memory"
+  ]
+}

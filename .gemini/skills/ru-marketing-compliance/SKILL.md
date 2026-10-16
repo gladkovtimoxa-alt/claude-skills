@@ -1,0 +1,1 @@
+../../../marketing-skill/skills/ru-marketing-compliance/SKILL.md
